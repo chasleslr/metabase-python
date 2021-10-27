@@ -27,6 +27,12 @@ class Database(Resource):
     cache_ttl: int = None
 
     @classmethod
+    def all(cls) -> List["Database"]:
+        response = cls.connection().get(cls.ENDPOINT)
+        records = [cls.from_dict(db) for db in response.json().get("data", [])]
+        return records
+
+    @classmethod
     def create(cls, name: str, engine: Engine, details: dict, **kwargs) -> "Database":
         response = cls.connection().post(
             cls.ENDPOINT,

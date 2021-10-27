@@ -20,6 +20,12 @@ class User(Resource):
     locale: str = None
 
     @classmethod
+    def all(cls) -> List["User"]:
+        response = cls.connection().get(cls.ENDPOINT)
+        records = [cls.from_dict(db) for db in response.json().get("data", [])]
+        return records
+
+    @classmethod
     def create(cls, first_name: str, last_name: str, email: str, **kwargs) -> "User":
         response = cls.connection().post(
             cls.ENDPOINT,

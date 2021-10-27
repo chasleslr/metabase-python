@@ -15,9 +15,7 @@ class Resource:
 
     @classmethod
     def all(cls) -> List["Resource"]:
-        response = cls.connection().get(cls.ENDPOINT)
-        records = [cls.from_dict(db) for db in response.json().get("data", [])]
-        return records
+        raise NotImplementedError()
 
     @classmethod
     def get(cls, id: int) -> "Resource":
