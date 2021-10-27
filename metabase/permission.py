@@ -29,6 +29,9 @@ class PermissionGroup(Resource):
         )
         return cls.from_dict(response.json())
 
+    def delete(self) -> None:
+        self.connection().delete(self.ENDPOINT + f"/{self.id}")
+
 
 @dataclass
 class PermissionMembership(Resource):
@@ -56,3 +59,6 @@ class PermissionMembership(Resource):
             }
         )
         return cls.from_dict(response.json())
+
+    def delete(self) -> None:
+        self.connection().delete(self.ENDPOINT + f"/{self.membership_id}")
