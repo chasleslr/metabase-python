@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from typing import List
 
-from metabase.resource import Resource
+from metabase.resource import ListResource, CreateResource, GetResource, UpdateResource, DeleteResource
 
 
 @dataclass
-class User(Resource):
+class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteResource):
     ENDPOINT = "/api/user"
 
     id: int
@@ -20,7 +20,7 @@ class User(Resource):
     locale: str = None
 
     @classmethod
-    def all(cls) -> List["User"]:
+    def list(cls) -> List["User"]:
         response = cls.connection().get(cls.ENDPOINT)
         records = [cls.from_dict(db) for db in response.json().get("data", [])]
         return records

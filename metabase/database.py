@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List
 
-from metabase.resource import Resource
+from metabase.resource import ListResource, CreateResource, GetResource, UpdateResource, DeleteResource
 
 
 @dataclass
-class Database(Resource):
+class Database(ListResource, CreateResource, GetResource, UpdateResource, DeleteResource):
     ENDPOINT = "/api/database"
 
     class Engine(str, Enum):
@@ -27,7 +27,7 @@ class Database(Resource):
     cache_ttl: int = None
 
     @classmethod
-    def all(cls) -> List["Database"]:
+    def list(cls) -> List["Database"]:
         response = cls.connection().get(cls.ENDPOINT)
         records = [cls.from_dict(db) for db in response.json().get("data", [])]
         return records
@@ -44,9 +44,6 @@ class Database(Resource):
             }
         )
         return cls.from_dict(response.json())
-
-    def delete(self) -> None:
-        self.connection().delete(self.ENDPOINT + f"/{self.id}")
 
     def discard_values(self):
         self.connection().post(self.ENDPOINT + f"/{self.id}" + "/discard_values")
