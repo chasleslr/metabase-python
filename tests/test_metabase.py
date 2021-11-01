@@ -2,6 +2,8 @@ from unittest import TestCase
 
 from metabase import Metabase
 
+from tests.helpers import IntegrationTestCase
+
 
 class MetabaseTests(TestCase):
     def test_singleton(self):
@@ -50,3 +52,11 @@ class MetabaseTests(TestCase):
     def test_delete(self):
         # TODO
         pass
+
+
+class MetabaseIntegrationTests(IntegrationTestCase):
+    def test_can_connect(self):
+        """Ensure Metabase test instance is setup and can be connected to."""
+        response = self.metabase.get("/api/user/current")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(self.EMAIL, response.json().get("email"))
