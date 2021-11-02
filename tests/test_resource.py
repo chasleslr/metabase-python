@@ -1,8 +1,11 @@
 from unittest import TestCase
+from unittest.mock import call, patch
+from requests import HTTPError
 
 from exceptions import NotFoundError
 from metabase.metabase import Metabase
 from metabase.resource import CreateResource, DeleteResource, GetResource, ListResource, Resource, UpdateResource
+from missing import MISSING
 
 from tests.helpers import IntegrationTestCase
 
@@ -91,6 +94,27 @@ class UpdateResourceTests(IntegrationTestCase):
 
         # metabase was updated
         self.assertEqual("My New Collection", Collection.get(collection.id).name)
+
+    def test_update_missing(self):
+        """Ensure UpdateResource.update() ignores arguments equal to MISSING."""
+        class Collection(UpdateResource):
+            ENDPOINT = "/api/collection"
+
+        test_matrix = [
+            ({"a": "A", "b": "B"}, {"a": "A", "b": "B"}),
+            ({"a": "A", "b": MISSING}, {"a": "A"}),
+            ({"a": MISSING, "b": MISSING}, {}),
+        ]
+
+        for kwargs, expected in test_matrix:
+            with patch("metabase.resource.Metabase.put") as mock:
+                try:
+                    Collection(id=1).update(**kwargs)
+                except HTTPError:
+                    pass
+
+                self.assertTrue(mock.called)
+                self.assertIsNone(mock.assert_called_with("/api/collection/1", json=expected))
 
 
 class DeleteResourceTests(IntegrationTestCase):

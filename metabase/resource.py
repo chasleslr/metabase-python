@@ -4,6 +4,8 @@ from exceptions import NotFoundError
 from metabase import Metabase
 from requests import HTTPError
 
+from missing import MISSING
+
 
 class Resource:
     ENDPOINT: str
@@ -65,7 +67,8 @@ class CreateResource(Resource):
 class UpdateResource(Resource):
     def update(self, **kwargs) -> None:
         """Update an instance."""
-        response = self.connection().put(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}", json=kwargs)
+        params = {k: v for k, v in kwargs.items() if v != MISSING}
+        response = self.connection().put(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}", json=params)
 
         if response.status_code != 200:
             raise HTTPError(response.json())
