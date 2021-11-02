@@ -4,7 +4,7 @@ from exceptions import NotFoundError
 from metabase import Metabase
 from requests import HTTPError
 
-from missing import MISSING
+from metabase.missing import MISSING
 
 
 class Resource:
@@ -82,5 +82,5 @@ class DeleteResource(Resource):
         """Delete an instance."""
         response = self.connection().delete(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}")
 
-        if response.status_code != 204:
+        if response.status_code not in (200, 204):
             raise HTTPError(response.content.decode())
