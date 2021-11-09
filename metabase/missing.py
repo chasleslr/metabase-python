@@ -1,6 +1,3 @@
 
-class MissingType:
+class MISSING:
     pass
-
-
-MISSING = MissingType()
