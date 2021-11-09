@@ -11,7 +11,7 @@ class MetricTests(IntegrationTestCase):
             metric.archive()
 
     def test_list(self):
-        """Ensure PermissionMembership.list returns a list of PermissionMembership instances."""
+        """Ensure Metric.list returns a list of Metric instances."""
         # fixture
         _ = Metric.create(
             name="My Metric",
