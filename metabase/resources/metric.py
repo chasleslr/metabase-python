@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List
 
-from metabase.resource import ListResource, CreateResource, GetResource, UpdateResource, DeleteResource
-from missing import MISSING
+from metabase.resource import ListResource, CreateResource, GetResource, UpdateResource
+from metabase.missing import MISSING
 
 
 class Metric(ListResource, CreateResource, GetResource, UpdateResource):
@@ -64,21 +64,18 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
             show_in_getting_started: bool = MISSING,
             **kwargs
     ) -> None:
-        params = {
-            "revision_message": revision_message,
-            "name": name,
-            "description": description,
-            "definition": definition,
-            "how_is_this_calculated": how_is_this_calculated,
-            "points_of_interest": points_of_interest,
-            "caveats": caveats,
-            "archived": archived,
-            "show_in_getting_started": show_in_getting_started,
+        return super(Metric, self).update(
+            revision_message=revision_message,
+            name=name,
+            description=description,
+            definition=definition,
+            how_is_this_calculated=how_is_this_calculated,
+            points_of_interest=points_of_interest,
+            caveats=caveats,
+            archived=archived,
+            show_in_getting_started=show_in_getting_started,
             **kwargs
-        }
-        params = {k: v for k, v in params.items() if v != MISSING}
-
-        return super(Metric, self).update(**params)
+        )
 
     def archive(self):
         return self.update(archived=True, revision_message="Archived by metabase-python.")
