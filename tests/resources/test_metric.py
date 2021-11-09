@@ -10,6 +10,30 @@ class MetricTests(IntegrationTestCase):
         for metric in metrics:
             metric.archive()
 
+    def test_list(self):
+        """Ensure PermissionMembership.list returns a list of PermissionMembership instances."""
+        # fixture
+        _ = Metric.create(
+            name="My Metric",
+            table_id=1,
+            definition={
+                "aggregation": [["count"]],
+            }
+        )
+        _ = Metric.create(
+            name="My Metric",
+            table_id=1,
+            definition={
+                "aggregation": [["count"]],
+            }
+        )
+
+        metrics = Metric.list()
+
+        self.assertIsInstance(metrics, list)
+        self.assertEqual(2, len(metrics))
+        self.assertTrue(all([isinstance(m, Metric) for m in metrics]))
+
     def test_get(self):
         """
         Ensure Metric.get returns a Metric instance for a given ID, or
