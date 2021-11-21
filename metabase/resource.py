@@ -58,7 +58,7 @@ class CreateResource(Resource):
         """Create an instance and save it."""
         response = cls.connection().post(cls.ENDPOINT, json=kwargs)
 
-        if response.status_code != 200:
+        if response.status_code not in (200, 202):
             raise HTTPError(response.content.decode())
 
         return cls(**response.json())
@@ -66,7 +66,11 @@ class CreateResource(Resource):
 
 class UpdateResource(Resource):
     def update(self, **kwargs) -> None:
-        """Update an instance."""
+        """
+        Update an instance by providing function arguments.
+        Providing any argument with metabase.MISSING will result in this argument being
+        ignored from the request.
+        """
         params = {k: v for k, v in kwargs.items() if v != MISSING}
         response = self.connection().put(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}", json=params)
 
