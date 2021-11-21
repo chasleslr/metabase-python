@@ -13,6 +13,11 @@ class UserTests(IntegrationTestCase):
             if user.id != 1:
                 user.delete()
 
+    def test_import(self):
+        """Ensure User can be imported from Metabase."""
+        from metabase import User
+        self.assertIsNotNone(User())
+
     def test_get(self):
         """
         Ensure User.get() returns a User instance for a given ID, or

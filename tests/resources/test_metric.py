@@ -10,6 +10,11 @@ class MetricTests(IntegrationTestCase):
         for metric in metrics:
             metric.archive()
 
+    def test_import(self):
+        """Ensure Metric can be imported from Metabase."""
+        from metabase import Metric
+        self.assertIsNotNone(Metric())
+
     def test_list(self):
         """Ensure Metric.list returns a list of Metric instances."""
         # fixture

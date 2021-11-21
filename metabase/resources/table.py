@@ -7,7 +7,7 @@ from metabase.resource import ListResource, GetResource, Resource, UpdateResourc
 from metabase.resources.field import Field
 from metabase.missing import MISSING
 from metabase.resources.metric import Metric
-from resources.segment import Segment
+from metabase.resources.segment import Segment
 
 
 class Dimension(Resource):

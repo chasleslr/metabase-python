@@ -10,6 +10,11 @@ class SegmentTests(IntegrationTestCase):
         for segment in segments:
             segment.archive()
 
+    def test_import(self):
+        """Ensure Segment can be imported from Metabase."""
+        from metabase import Segment
+        self.assertIsNotNone(Segment())
+
     def test_list(self):
         """Ensure Segment.list returns a list of Segment instances."""
         # fixture

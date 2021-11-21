@@ -12,6 +12,11 @@ class PermissionMembershipTests(IntegrationTestCase):
                 # can't delete default groups
                 group.delete()
 
+    def test_import(self):
+        """Ensure PermissionGroup can be imported from Metabase."""
+        from metabase import PermissionGroup
+        self.assertIsNotNone(PermissionGroup())
+
     def test_list(self):
         """Ensure PermissionGroup.list returns a list of PermissionGroup instances."""
         groups = PermissionGroup.list()

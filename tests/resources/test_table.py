@@ -9,6 +9,11 @@ class TableTests(IntegrationTestCase):
     def setUp(self) -> None:
         super(TableTests, self).setUp()
 
+    def test_import(self):
+        """Ensure Table can be imported from Metabase."""
+        from metabase import Table
+        self.assertIsNotNone(Table())
+
     def test_list(self):
         """Ensure Table.list() returns a list of Table instances."""
         tables = Table.list()

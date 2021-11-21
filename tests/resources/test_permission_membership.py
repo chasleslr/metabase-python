@@ -8,8 +8,8 @@ class PermissionMembershipTests(IntegrationTestCase):
     def tearDown(self) -> None:
         memberships = PermissionMembership.list()
         for membership in memberships:
-            if membership.membership_id not in (1, 2):
-                # can't delete default memberships
+            if membership.group_id not in (1, 2):
+                # can't delete memberships in the default groups
                 membership.delete()
 
         groups = PermissionGroup.list()
@@ -18,12 +18,16 @@ class PermissionMembershipTests(IntegrationTestCase):
                 # can't delete default groups
                 group.delete()
 
+    def test_import(self):
+        """Ensure PermissionMembership can be imported from Metabase."""
+        from metabase import PermissionMembership
+        self.assertIsNotNone(PermissionMembership())
+
     def test_list(self):
         """Ensure PermissionMembership.list returns a list of PermissionMembership instances."""
         memberships = PermissionMembership.list()
-
         self.assertIsInstance(memberships, list)
-        self.assertEqual(2, len(memberships))    # there are 2 default groups in Metabase
+        self.assertTrue(len(memberships) > 0)
         self.assertTrue(all([isinstance(m, PermissionMembership) for m in memberships]))
 
     def test_create(self):
