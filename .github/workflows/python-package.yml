@@ -41,7 +41,7 @@ jobs:
         pipenv install --deploy --dev
 
     - name: Wait for Metabase to be initialized
-      run: sleep 60s
+      run: sleep 120
       shell: bash
 
     - name: Test with pytest
