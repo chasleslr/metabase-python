@@ -4,7 +4,13 @@ from typing import List
 
 from requests import HTTPError
 
-from resource import CreateResource, DeleteResource, GetResource, ListResource, UpdateResource
+from metabase.resource import (
+    CreateResource,
+    DeleteResource,
+    GetResource,
+    ListResource,
+    UpdateResource,
+)
 
 
 class PermissionMembership(ListResource, CreateResource, DeleteResource):
@@ -20,13 +26,17 @@ class PermissionMembership(ListResource, CreateResource, DeleteResource):
     @classmethod
     def list(cls) -> List[PermissionMembership]:
         response = cls.connection().get(cls.ENDPOINT)
-        all_memberships = [item for sublist in response.json().values() for item in sublist]
+        all_memberships = [
+            item for sublist in response.json().values() for item in sublist
+        ]
         records = [cls(**record) for record in all_memberships]
         return records
 
     @classmethod
     def create(cls, group_id: int, user_id: int, **kwargs) -> PermissionMembership:
-        response = cls.connection().post(cls.ENDPOINT, json={"group_id": group_id, "user_id": user_id})
+        response = cls.connection().post(
+            cls.ENDPOINT, json={"group_id": group_id, "user_id": user_id}
+        )
 
         if response.status_code != 200:
             raise HTTPError(response.content.decode())
