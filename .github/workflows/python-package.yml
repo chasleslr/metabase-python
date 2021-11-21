@@ -40,6 +40,10 @@ jobs:
         python -m pip install pipenv
         pipenv install --deploy --dev
 
+    - name: Wait for Metabase to be initialized
+      run: sleep 60s
+      shell: bash
+
     - name: Test with pytest
       run: |
         pipenv run pytest --cov=./ --cov-report=xml
