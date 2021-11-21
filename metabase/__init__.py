@@ -5,3 +5,4 @@ from metabase.resources.permission_membership import PermissionMembership
 from metabase.resources.table import Table
 from metabase.resources.segment import Segment
 from metabase.resources.metric import Metric
+from metabase.resources.dataset import Dataset
