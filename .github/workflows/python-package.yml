@@ -25,6 +25,8 @@ jobs:
     services:
       metabase:
         image: metabase/metabase
+        ports:
+          - 3000:3000
 
     steps:
     - uses: actions/checkout@v2
@@ -41,7 +43,7 @@ jobs:
         pipenv install --deploy --dev
 
     - name: Wait for Metabase to be initialized
-      run: sleep 600s
+      run: sleep 60s
       shell: bash
 
     - name: Test with pytest
