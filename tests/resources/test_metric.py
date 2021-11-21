@@ -1,6 +1,6 @@
 from exceptions import NotFoundError
-from metabase.resources.metric import Metric
 
+from metabase.resources.metric import Metric
 from tests.helpers import IntegrationTestCase
 
 
@@ -13,6 +13,7 @@ class MetricTests(IntegrationTestCase):
     def test_import(self):
         """Ensure Metric can be imported from Metabase."""
         from metabase import Metric
+
         self.assertIsNotNone(Metric())
 
     def test_list(self):
@@ -23,14 +24,14 @@ class MetricTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "aggregation": [["count"]],
-            }
+            },
         )
         _ = Metric.create(
             name="My Metric",
             table_id=1,
             definition={
                 "aggregation": [["count"]],
-            }
+            },
         )
 
         metrics = Metric.list()
@@ -50,7 +51,7 @@ class MetricTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "aggregation": [["count"]],
-            }
+            },
         )
         self.assertIsInstance(metric, Metric)
 
@@ -68,7 +69,7 @@ class MetricTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "aggregation": [["count"]],
-            }
+            },
         )
 
         self.assertIsInstance(metric, Metric)
@@ -84,15 +85,13 @@ class MetricTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "aggregation": [["count"]],
-            }
+            },
         )
 
         self.assertIsInstance(metric, Metric)
         self.assertEqual("My Metric", metric.name)
 
-        metric.update(
-            name="New Name"
-        )
+        metric.update(name="New Name")
         # assert local instance is mutated
         self.assertEqual("New Name", metric.name)
 
@@ -108,7 +107,7 @@ class MetricTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "aggregation": [["count"]],
-            }
+            },
         )
 
         self.assertIsInstance(metric, Metric)
@@ -121,4 +120,3 @@ class MetricTests(IntegrationTestCase):
         # assert metabase object is mutated
         m = Metric.get(metric.id)
         self.assertEqual(True, m.archived)
-

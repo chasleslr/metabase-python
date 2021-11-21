@@ -1,6 +1,6 @@
 from exceptions import NotFoundError
-from metabase.resources.segment import Segment
 
+from metabase.resources.segment import Segment
 from tests.helpers import IntegrationTestCase
 
 
@@ -13,6 +13,7 @@ class SegmentTests(IntegrationTestCase):
     def test_import(self):
         """Ensure Segment can be imported from Metabase."""
         from metabase import Segment
+
         self.assertIsNotNone(Segment())
 
     def test_list(self):
@@ -23,14 +24,14 @@ class SegmentTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "filter": ["=", ["field", 1, None], 0],
-            }
+            },
         )
         _ = Segment.create(
             name="My Segment",
             table_id=1,
             definition={
                 "filter": ["=", ["field", 1, None], 0],
-            }
+            },
         )
 
         segments = Segment.list()
@@ -50,7 +51,7 @@ class SegmentTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "filter": ["=", ["field", 1, None], 0],
-            }
+            },
         )
         self.assertIsInstance(segment, Segment)
 
@@ -68,7 +69,7 @@ class SegmentTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "filter": ["=", ["field", 1, None], 0],
-            }
+            },
         )
 
         self.assertIsInstance(segment, Segment)
@@ -84,15 +85,13 @@ class SegmentTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "filter": ["=", ["field", 1, None], 0],
-            }
+            },
         )
 
         self.assertIsInstance(segment, Segment)
         self.assertEqual("My Segment", segment.name)
 
-        segment.update(
-            name="New Name"
-        )
+        segment.update(name="New Name")
         # assert local instance is mutated
         self.assertEqual("New Name", segment.name)
 
@@ -108,7 +107,7 @@ class SegmentTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "filter": ["=", ["field", 1, None], 0],
-            }
+            },
         )
 
         self.assertIsInstance(segment, Segment)
@@ -121,4 +120,3 @@ class SegmentTests(IntegrationTestCase):
         # assert metabase object is mutated
         m = Segment.get(segment.id)
         self.assertEqual(True, m.archived)
-

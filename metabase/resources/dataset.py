@@ -38,13 +38,7 @@ class Dataset(CreateResource):
     average_execution_time: int = None
 
     @classmethod
-    def create(
-            cls,
-            database: int,
-            type: str,
-            query: dict,
-            **kwargs
-    ) -> Dataset:
+    def create(cls, database: int, type: str, query: dict, **kwargs) -> Dataset:
         dataset = super(Dataset, cls).create(database=database, type=type, query=query)
         dataset.data = Data(**dataset.data)
         return dataset

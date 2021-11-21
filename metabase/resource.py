@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from exceptions import NotFoundError
-from metabase import Metabase
 from requests import HTTPError
 
+from metabase import Metabase
 from metabase.missing import MISSING
 
 
@@ -24,7 +24,12 @@ class Resource:
         if self.PRIMARY_KEY is not None:
             attributes.insert(0, attributes.pop(attributes.index(self.PRIMARY_KEY)))
 
-        return self.__class__.__qualname__ + "(" + ', '.join([f"{attr}={getattr(self, attr)}" for attr in attributes]) + ")"
+        return (
+            self.__class__.__qualname__
+            + "("
+            + ", ".join([f"{attr}={getattr(self, attr)}" for attr in attributes])
+            + ")"
+        )
 
     @staticmethod
     def connection() -> Metabase:
@@ -72,7 +77,9 @@ class UpdateResource(Resource):
         ignored from the request.
         """
         params = {k: v for k, v in kwargs.items() if v != MISSING}
-        response = self.connection().put(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}", json=params)
+        response = self.connection().put(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}", json=params
+        )
 
         if response.status_code != 200:
             raise HTTPError(response.json())
@@ -84,7 +91,9 @@ class UpdateResource(Resource):
 class DeleteResource(Resource):
     def delete(self) -> None:
         """Delete an instance."""
-        response = self.connection().delete(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}")
+        response = self.connection().delete(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}"
+        )
 
         if response.status_code not in (200, 204):
             raise HTTPError(response.content.decode())

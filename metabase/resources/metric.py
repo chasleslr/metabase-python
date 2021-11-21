@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List
 
-from metabase.resource import ListResource, CreateResource, GetResource, UpdateResource
 from metabase.missing import MISSING
+from metabase.resource import CreateResource, GetResource, ListResource, UpdateResource
 
 
 class Metric(ListResource, CreateResource, GetResource, UpdateResource):
@@ -40,29 +40,33 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
 
     @classmethod
     def create(
-            cls,
-            name: str,
-            table_id: int,
-            definition: dict,
-            description: str = "Created by metabase-python.",
-            **kwargs
+        cls,
+        name: str,
+        table_id: int,
+        definition: dict,
+        description: str = "Created by metabase-python.",
+        **kwargs
     ) -> Metric:
         return super(Metric, cls).create(
-            name=name, table_id=table_id, definition=definition, description=description, **kwargs
+            name=name,
+            table_id=table_id,
+            definition=definition,
+            description=description,
+            **kwargs
         )
 
     def update(
-            self,
-            revision_message: str = "Updated by metabase-python.",
-            name: str = MISSING,
-            description: str = MISSING,
-            definition: dict = MISSING,
-            how_is_this_calculated: str = MISSING,
-            points_of_interest: str = MISSING,
-            caveats: str = MISSING,
-            archived: bool = MISSING,
-            show_in_getting_started: bool = MISSING,
-            **kwargs
+        self,
+        revision_message: str = "Updated by metabase-python.",
+        name: str = MISSING,
+        description: str = MISSING,
+        definition: dict = MISSING,
+        how_is_this_calculated: str = MISSING,
+        points_of_interest: str = MISSING,
+        caveats: str = MISSING,
+        archived: bool = MISSING,
+        show_in_getting_started: bool = MISSING,
+        **kwargs
     ) -> None:
         return super(Metric, self).update(
             revision_message=revision_message,
@@ -78,4 +82,6 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
         )
 
     def archive(self):
-        return self.update(archived=True, revision_message="Archived by metabase-python.")
+        return self.update(
+            archived=True, revision_message="Archived by metabase-python."
+        )

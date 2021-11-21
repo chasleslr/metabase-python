@@ -2,10 +2,18 @@ from __future__ import annotations
 
 from typing import List
 
-from metabase.resource import ListResource, CreateResource, GetResource, UpdateResource, DeleteResource
+from metabase.resource import (
+    CreateResource,
+    DeleteResource,
+    GetResource,
+    ListResource,
+    UpdateResource,
+)
 
 
-class PermissionGroup(ListResource, CreateResource, GetResource, UpdateResource, DeleteResource):
+class PermissionGroup(
+    ListResource, CreateResource, GetResource, UpdateResource, DeleteResource
+):
     ENDPOINT = "/api/permissions/group"
 
     id: int

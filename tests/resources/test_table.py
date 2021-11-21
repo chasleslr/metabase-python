@@ -1,7 +1,8 @@
-from metabase.resources.field import Field
-from metabase.resources.table import Dimension, Table
-from metabase.resources.metric import Metric
 from resources.segment import Segment
+
+from metabase.resources.field import Field
+from metabase.resources.metric import Metric
+from metabase.resources.table import Dimension, Table
 from tests.helpers import IntegrationTestCase
 
 
@@ -12,6 +13,7 @@ class TableTests(IntegrationTestCase):
     def test_import(self):
         """Ensure Table can be imported from Metabase."""
         from metabase import Table
+
         self.assertIsNotNone(Table())
 
     def test_list(self):
@@ -109,7 +111,7 @@ class TableTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "aggregation": [["count"]],
-            }
+            },
         )
 
         metrics = table.metrics()
@@ -134,7 +136,7 @@ class TableTests(IntegrationTestCase):
             table_id=1,
             definition={
                 "filter": ["=", ["field", 1, None], 0],
-            }
+            },
         )
 
         segments = table.segments()

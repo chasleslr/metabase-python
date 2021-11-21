@@ -1,8 +1,8 @@
 from random import randint
 
 from exceptions import NotFoundError
-from metabase.resources.user import User
 
+from metabase.resources.user import User
 from tests.helpers import IntegrationTestCase
 
 
@@ -16,6 +16,7 @@ class UserTests(IntegrationTestCase):
     def test_import(self):
         """Ensure User can be imported from Metabase."""
         from metabase import User
+
         self.assertIsNotNone(User())
 
     def test_get(self):
@@ -28,7 +29,7 @@ class UserTests(IntegrationTestCase):
             first_name="Test",
             last_name="Test",
             email=f"{randint(2, 10000)}@example.com",
-            password="example123"
+            password="example123",
         )
         self.assertIsInstance(user, User)
 
@@ -43,10 +44,7 @@ class UserTests(IntegrationTestCase):
         """Ensure User.create() creates a User in Metabase and returns a User instance."""
         email = f"{randint(2, 10000)}@example.com"
         user = User.create(
-            first_name="Test",
-            last_name="Test",
-            email=email,
-            password="example123"
+            first_name="Test", last_name="Test", email=email, password="example123"
         )
 
         self.assertIsInstance(user, User)
@@ -61,15 +59,13 @@ class UserTests(IntegrationTestCase):
             first_name="Test",
             last_name="Test",
             email=f"{randint(2, 10000)}@example.com",
-            password="example123"
+            password="example123",
         )
 
         self.assertIsInstance(user, User)
         self.assertEqual("Test", user.first_name)
 
-        user.update(
-            first_name="Test1"
-        )
+        user.update(first_name="Test1")
         # assert local instance is mutated
         self.assertEqual("Test1", user.first_name)
 
@@ -84,7 +80,7 @@ class UserTests(IntegrationTestCase):
             first_name="Test",
             last_name="Test",
             email=f"{randint(2, 10000)}@example.com",
-            password="example123"
+            password="example123",
         )
         self.assertIsInstance(user, User)
 
@@ -93,4 +89,3 @@ class UserTests(IntegrationTestCase):
         # assert metabase object is mutated
         with self.assertRaises(NotFoundError):
             _ = User.get(user.id)
-

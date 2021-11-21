@@ -1,14 +1,14 @@
-from metabase.resources.dataset import Data, Dataset
-
-from tests.helpers import IntegrationTestCase
-
 import pandas as pd
+
+from metabase.resources.dataset import Data, Dataset
+from tests.helpers import IntegrationTestCase
 
 
 class DatasetTests(IntegrationTestCase):
     def test_import(self):
         """Ensure Metric can be imported from Metabase."""
         from metabase import Dataset
+
         self.assertIsNotNone(Dataset())
 
     def test_create(self):
@@ -19,8 +19,8 @@ class DatasetTests(IntegrationTestCase):
             query={
                 "source-table": 1,
                 "breakout": [["field", 7, {"temporal-unit": "year"}]],
-                "aggregation": [["count"]]
-            }
+                "aggregation": [["count"]],
+            },
         )
         self.assertIsInstance(dataset, Dataset)
         self.assertIsInstance(dataset.data, Data)
@@ -33,8 +33,8 @@ class DatasetTests(IntegrationTestCase):
             query={
                 "source-table": 1,
                 "breakout": [["field", 7, {"temporal-unit": "year"}]],
-                "aggregation": [["count"]]
-            }
+                "aggregation": [["count"]],
+            },
         )
         df = dataset.to_pandas()
         self.assertIsInstance(df, pd.DataFrame)

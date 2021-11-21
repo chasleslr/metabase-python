@@ -3,8 +3,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from metabase.resource import GetResource, UpdateResource
 from metabase.missing import MISSING
+from metabase.resource import GetResource, UpdateResource
 
 
 class Field(GetResource, UpdateResource):
@@ -115,18 +115,18 @@ class Field(GetResource, UpdateResource):
         return super(Field, cls).get(id)
 
     def update(
-            self,
-            display_name: str = MISSING,
-            description: str = MISSING,
-            semantic_type: Field.SemanticType = MISSING,
-            visibility_type: Field.VisibilityType = MISSING,
-            fk_target_field_id: int = MISSING,
-            has_field_values: Field.FieldValue = MISSING,
-            points_of_interest: str = MISSING,
-            settings: str = MISSING,
-            caveats: str = MISSING,
-            coercion_strategy: str = MISSING,
-            **kwargs
+        self,
+        display_name: str = MISSING,
+        description: str = MISSING,
+        semantic_type: Field.SemanticType = MISSING,
+        visibility_type: Field.VisibilityType = MISSING,
+        fk_target_field_id: int = MISSING,
+        has_field_values: Field.FieldValue = MISSING,
+        points_of_interest: str = MISSING,
+        settings: str = MISSING,
+        caveats: str = MISSING,
+        coercion_strategy: str = MISSING,
+        **kwargs,
     ) -> None:
         return super(Field, self).update(
             display_name=display_name,
@@ -138,14 +138,22 @@ class Field(GetResource, UpdateResource):
             points_of_interest=points_of_interest,
             settings=settings,
             caveats=caveats,
-            coercion_strategy=coercion_strategy
+            coercion_strategy=coercion_strategy,
         )
 
     def related(self) -> Dict[str, Any]:
-        return self.connection().get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related").json()
+        return (
+            self.connection()
+            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related")
+            .json()
+        )
 
     def discard_values(self):
-        self.connection().post(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values")
+        self.connection().post(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values"
+        )
 
     def rescan_values(self):
-        self.connection().post(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values")
+        self.connection().post(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values"
+        )

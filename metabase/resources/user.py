@@ -3,8 +3,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Dict, List
 
-from metabase.resource import ListResource, CreateResource, GetResource, UpdateResource, DeleteResource
 from metabase.missing import MISSING
+from metabase.resource import (
+    CreateResource,
+    DeleteResource,
+    GetResource,
+    ListResource,
+    UpdateResource,
+)
 
 
 class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteResource):
@@ -38,14 +44,14 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
 
     @classmethod
     def create(
-            cls,
-            first_name: str,
-            last_name: str,
-            email: str,
-            password: str,
-            group_ids: List[int] = None,
-            login_attributes: Dict[str, Any] = None,
-            **kwargs
+        cls,
+        first_name: str,
+        last_name: str,
+        email: str,
+        password: str,
+        group_ids: List[int] = None,
+        login_attributes: Dict[str, Any] = None,
+        **kwargs,
     ) -> User:
         return super(User, cls).create(
             first_name=first_name,
@@ -54,19 +60,19 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
             password=password,
             group_ids=group_ids,
             login_attributes=login_attributes,
-            **kwargs
+            **kwargs,
         )
 
     def update(
-            self,
-            first_name: str = MISSING,
-            last_name: str = MISSING,
-            email: str = MISSING,
-            password: str = MISSING,
-            group_ids: List[int] = MISSING,
-            is_superuser: bool = MISSING,
-            locale: str = MISSING,
-            **kwargs
+        self,
+        first_name: str = MISSING,
+        last_name: str = MISSING,
+        email: str = MISSING,
+        password: str = MISSING,
+        group_ids: List[int] = MISSING,
+        is_superuser: bool = MISSING,
+        locale: str = MISSING,
+        **kwargs,
     ) -> None:
         return super(User, self).update(
             first_name=first_name,
@@ -75,11 +81,15 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
             password=password,
             group_ids=group_ids,
             locale=locale,
-            **kwargs
+            **kwargs,
         )
 
     def send_invite(self):
-        self.connection().put(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/send_invite")
+        self.connection().put(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/send_invite"
+        )
 
     def reactivate(self):
-        self.connection().put(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/reactivate")
+        self.connection().put(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/reactivate"
+        )

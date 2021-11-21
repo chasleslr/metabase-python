@@ -3,9 +3,9 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, List
 
-from metabase.resource import ListResource, GetResource, Resource, UpdateResource
-from metabase.resources.field import Field
 from metabase.missing import MISSING
+from metabase.resource import GetResource, ListResource, Resource, UpdateResource
+from metabase.resources.field import Field
 from metabase.resources.metric import Metric
 from metabase.resources.segment import Segment
 
@@ -68,16 +68,16 @@ class Table(ListResource, GetResource, UpdateResource):
         return super(Table, cls).get(id)
 
     def update(
-            self,
-            display_name: str = MISSING,
-            description: str = MISSING,
-            field_order: Table.FieldOrder = MISSING,
-            visibility_type: Table.VisibilityType = MISSING,
-            entity_type: str = MISSING,
-            points_of_interest: str = MISSING,
-            caveats: str = MISSING,
-            show_in_getting_started: bool = MISSING,
-            **kwargs
+        self,
+        display_name: str = MISSING,
+        description: str = MISSING,
+        field_order: Table.FieldOrder = MISSING,
+        visibility_type: Table.VisibilityType = MISSING,
+        entity_type: str = MISSING,
+        points_of_interest: str = MISSING,
+        caveats: str = MISSING,
+        show_in_getting_started: bool = MISSING,
+        **kwargs,
     ) -> None:
         return super(Table, self).update(
             display_name=display_name,
@@ -87,29 +87,54 @@ class Table(ListResource, GetResource, UpdateResource):
             entity_type=entity_type,
             points_of_interest=points_of_interest,
             caveats=caveats,
-            show_in_getting_started=show_in_getting_started
+            show_in_getting_started=show_in_getting_started,
         )
 
     def foreign_keys(self) -> List[dict]:
-        return self.connection().get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/fks").json()
+        return (
+            self.connection()
+            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/fks")
+            .json()
+        )
 
     def query_metadata(self) -> Dict[str, Any]:
-        return self.connection().get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/query_metadata").json()
+        return (
+            self.connection()
+            .get(
+                self.ENDPOINT
+                + f"/{getattr(self, self.PRIMARY_KEY)}"
+                + "/query_metadata"
+            )
+            .json()
+        )
 
     def related(self) -> Dict[str, Any]:
-        return self.connection().get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related").json()
+        return (
+            self.connection()
+            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related")
+            .json()
+        )
 
     def discard_values(self):
-        self.connection().post(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values")
+        self.connection().post(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values"
+        )
 
     def rescan_values(self):
-        self.connection().post(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values")
+        self.connection().post(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values"
+        )
 
     def fields(self) -> List[Field]:
         return [Field(**field) for field in self.query_metadata().get("fields")]
 
     def dimensions(self) -> List[Dimension]:
-        return [Dimension(id=id, **dimension) for id, dimension in self.query_metadata().get("dimension_options", {}).items()]
+        return [
+            Dimension(id=id, **dimension)
+            for id, dimension in self.query_metadata()
+            .get("dimension_options", {})
+            .items()
+        ]
 
     def metrics(self) -> List[Metric]:
         return [Metric(**metric) for metric in self.related().get("metrics")]

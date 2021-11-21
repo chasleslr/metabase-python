@@ -9,6 +9,7 @@ class FieldTests(IntegrationTestCase):
     def test_import(self):
         """Ensure Field can be imported from Metabase."""
         from metabase import Field
+
         self.assertIsNotNone(Field())
 
     def test_get(self):
@@ -24,10 +25,7 @@ class FieldTests(IntegrationTestCase):
 
         display_name = field.display_name
         semantic_type = field.semantic_type
-        field.update(
-            display_name="New Name",
-            semantic_type=Field.SemanticType.zip_code
-        )
+        field.update(display_name="New Name", semantic_type=Field.SemanticType.zip_code)
 
         # assert local instance is mutated
         self.assertEqual("New Name", field.display_name)

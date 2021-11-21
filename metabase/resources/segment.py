@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List, Optional
 
-from metabase.resource import ListResource, CreateResource, GetResource, UpdateResource
 from metabase.missing import MISSING
+from metabase.resource import CreateResource, GetResource, ListResource, UpdateResource
 
 
 class Segment(ListResource, CreateResource, GetResource, UpdateResource):
@@ -36,28 +36,32 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
 
     @classmethod
     def create(
-            cls,
-            name: str,
-            table_id: int,
-            definition: dict,
-            description: str = "Created by metabase-python.",
-            **kwargs
+        cls,
+        name: str,
+        table_id: int,
+        definition: dict,
+        description: str = "Created by metabase-python.",
+        **kwargs
     ) -> Segment:
         return super(Segment, cls).create(
-            name=name, table_id=table_id, definition=definition, description=description, **kwargs
+            name=name,
+            table_id=table_id,
+            definition=definition,
+            description=description,
+            **kwargs
         )
 
     def update(
-            self,
-            revision_message: str = "Updated by metabase-python.",
-            name: str = MISSING,
-            description: str = MISSING,
-            definition: dict = MISSING,
-            show_in_getting_started: str = MISSING,
-            points_of_interest: str = MISSING,
-            caveats: str = MISSING,
-            archived: bool = MISSING,
-            **kwargs
+        self,
+        revision_message: str = "Updated by metabase-python.",
+        name: str = MISSING,
+        description: str = MISSING,
+        definition: dict = MISSING,
+        show_in_getting_started: str = MISSING,
+        points_of_interest: str = MISSING,
+        caveats: str = MISSING,
+        archived: bool = MISSING,
+        **kwargs
     ) -> None:
         return super(Segment, self).update(
             revision_message=revision_message,
@@ -72,4 +76,6 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
         )
 
     def archive(self):
-        return self.update(archived=True, revision_message="Archived by metabase-python.")
+        return self.update(
+            archived=True, revision_message="Archived by metabase-python."
+        )

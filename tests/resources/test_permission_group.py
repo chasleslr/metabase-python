@@ -1,6 +1,6 @@
 from exceptions import NotFoundError
-from metabase import PermissionGroup, PermissionMembership
 
+from metabase import PermissionGroup, PermissionMembership
 from tests.helpers import IntegrationTestCase
 
 
@@ -15,6 +15,7 @@ class PermissionMembershipTests(IntegrationTestCase):
     def test_import(self):
         """Ensure PermissionGroup can be imported from Metabase."""
         from metabase import PermissionGroup
+
         self.assertIsNotNone(PermissionGroup())
 
     def test_list(self):
@@ -22,7 +23,7 @@ class PermissionMembershipTests(IntegrationTestCase):
         groups = PermissionGroup.list()
 
         self.assertIsInstance(groups, list)
-        self.assertEqual(2, len(groups))    # there are 2 default groups in Metabase
+        self.assertEqual(2, len(groups))  # there are 2 default groups in Metabase
         self.assertTrue(all([isinstance(g, PermissionGroup) for g in groups]))
 
     def test_get(self):
@@ -31,9 +32,7 @@ class PermissionMembershipTests(IntegrationTestCase):
         raises a NotFoundError when it does not exist.
         """
         # fixture
-        group = PermissionGroup.create(
-            name="My Group"
-        )
+        group = PermissionGroup.create(name="My Group")
         self.assertIsInstance(group, PermissionGroup)
 
         g = PermissionGroup.get(group.id)
@@ -62,9 +61,7 @@ class PermissionMembershipTests(IntegrationTestCase):
         self.assertIsInstance(group, PermissionGroup)
         self.assertEqual("My Group", group.name)
 
-        group.update(
-            name="New Name"
-        )
+        group.update(name="New Name")
         # assert local instance is mutated
         self.assertEqual("New Name", group.name)
 
@@ -86,4 +83,3 @@ class PermissionMembershipTests(IntegrationTestCase):
         # assert metabase object is mutated
         with self.assertRaises(NotFoundError):
             _ = PermissionGroup.get(group.id)
-

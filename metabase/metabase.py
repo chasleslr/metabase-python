@@ -38,7 +38,7 @@ class Metabase(metaclass=Singleton):
         if self._token is None:
             response = requests.post(
                 self.host + "/api/session",
-                json={"username": self.user, "password": self.password}
+                json={"username": self.user, "password": self.password},
             )
             self._token = response.json()["id"]
 
