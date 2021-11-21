@@ -1,12 +1,18 @@
-from unittest import TestCase
-from unittest.mock import call, patch
-from requests import HTTPError
+from unittest.mock import patch
 
 from exceptions import NotFoundError
-from metabase.metabase import Metabase
-from metabase.resource import CreateResource, DeleteResource, GetResource, ListResource, Resource, UpdateResource
-from missing import MISSING
+from requests import HTTPError
 
+from metabase.metabase import Metabase
+from metabase.missing import MISSING
+from metabase.resource import (
+    CreateResource,
+    DeleteResource,
+    GetResource,
+    ListResource,
+    Resource,
+    UpdateResource,
+)
 from tests.helpers import IntegrationTestCase
 
 
@@ -40,6 +46,7 @@ class ResourceTests(IntegrationTestCase):
 class ListResourceTests(IntegrationTestCase):
     def test_list(self):
         """Ensure ListResource.list() returns a list of objects from Metabase, if any."""
+
         class Setting(ListResource):
             ENDPOINT = "/api/setting"
             PRIMARY_KEY = None
@@ -52,6 +59,7 @@ class ListResourceTests(IntegrationTestCase):
 class GetResourceTests(IntegrationTestCase):
     def test_get(self):
         """Ensure GetResource.get() returns an instance of an object, by ID, if any."""
+
         class User(GetResource):
             ENDPOINT = "/api/user"
 
@@ -60,6 +68,7 @@ class GetResourceTests(IntegrationTestCase):
 
     def test_get_404(self):
         """Ensure GetResource.get() raises NotFoundError if the object does not exist."""
+
         class User(GetResource):
             ENDPOINT = "/api/user"
 
@@ -70,17 +79,19 @@ class GetResourceTests(IntegrationTestCase):
 class CreateResourceTests(IntegrationTestCase):
     def test_create(self):
         """Ensure CreateResource.create() creates an object in Metabase and returns an instance."""
+
         class Collection(CreateResource, GetResource):
             ENDPOINT = "/api/collection"
 
         collection = Collection.create(name="My Collection", color="#123456")
         self.assertIsInstance(collection, Collection)
-        self.assertIsNotNone(Collection.get(collection.id))     # metabase was updated
+        self.assertIsNotNone(Collection.get(collection.id))  # metabase was updated
 
 
 class UpdateResourceTests(IntegrationTestCase):
     def test_update(self):
         """Ensure UpdateResource.update() updates an existing object in Metabase."""
+
         class Collection(CreateResource, GetResource, UpdateResource):
             ENDPOINT = "/api/collection"
 
@@ -97,6 +108,7 @@ class UpdateResourceTests(IntegrationTestCase):
 
     def test_update_missing(self):
         """Ensure UpdateResource.update() ignores arguments equal to MISSING."""
+
         class Collection(UpdateResource):
             ENDPOINT = "/api/collection"
 
@@ -114,12 +126,15 @@ class UpdateResourceTests(IntegrationTestCase):
                     pass
 
                 self.assertTrue(mock.called)
-                self.assertIsNone(mock.assert_called_with("/api/collection/1", json=expected))
+                self.assertIsNone(
+                    mock.assert_called_with("/api/collection/1", json=expected)
+                )
 
 
 class DeleteResourceTests(IntegrationTestCase):
     def test_delete(self):
         """Ensure DeleteResource.delete() deletes an existing object in Metabase."""
+
         class Group(CreateResource, GetResource, DeleteResource):
             ENDPOINT = "/api/permissions/group"
             PRIMARY_KEY = "id"
