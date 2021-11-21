@@ -48,12 +48,12 @@ jobs:
 
     - name: Test with pytest
       run: |
-        pipenv run pytest --cov=./coverage/reports/ --cov-report=xml
+        pipenv run pytest --cov=./ --cov-report=xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/reports/
+        directory: ./
         env_vars: OS,PYTHON
         fail_ci_if_error: true
