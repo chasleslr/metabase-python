@@ -31,7 +31,8 @@ setup(
     ],
     python_requires=">=3.6",
     install_requires=[
-        "requests"
+        "requests",
+        "pandas",
     ],
     extras_require={},
     setup_requires=[
