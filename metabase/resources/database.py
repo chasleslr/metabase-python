@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-from metabase import Field, Table
 from metabase.missing import MISSING
 from metabase.resource import (
     CreateResource,
@@ -11,6 +10,8 @@ from metabase.resource import (
     ListResource,
     UpdateResource,
 )
+from metabase.resources.field import Field
+from metabase.resources.table import Table
 
 
 class Database(

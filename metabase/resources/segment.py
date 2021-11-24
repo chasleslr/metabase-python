@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from metabase.missing import MISSING
 from metabase.resource import CreateResource, GetResource, ListResource, UpdateResource

@@ -4,13 +4,7 @@ from typing import List
 
 from requests import HTTPError
 
-from metabase.resource import (
-    CreateResource,
-    DeleteResource,
-    GetResource,
-    ListResource,
-    UpdateResource,
-)
+from metabase.resource import CreateResource, DeleteResource, ListResource
 
 
 class PermissionMembership(ListResource, CreateResource, DeleteResource):
