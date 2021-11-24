@@ -49,9 +49,9 @@ class TableTests(IntegrationTestCase):
         t.update(display_name=display_name)
 
     def test_foreign_keys(self):
-        """Ensure Table.foreign_keys() returns a list of foreign keys as dict."""
+        """Ensure Table.fks() returns a list of foreign keys as dict."""
         table = Table.get(1)
-        fks = table.foreign_keys()
+        fks = table.fks()
 
         self.assertIsInstance(fks, list)
         self.assertTrue(len(fks) > 0)

@@ -25,6 +25,13 @@ class PermissionMembership(ListResource, CreateResource, DeleteResource):
 
     @classmethod
     def list(cls) -> List[PermissionMembership]:
+        """
+        Fetch a map describing the group memberships of various users. This map’s format is:
+
+        {<user-id> [{:membership_id <id>
+                     :group_id      <id>}]}.
+        You must be a superuser to do this.
+        """
         response = cls.connection().get(cls.ENDPOINT)
         all_memberships = [
             item for sublist in response.json().values() for item in sublist
@@ -34,6 +41,11 @@ class PermissionMembership(ListResource, CreateResource, DeleteResource):
 
     @classmethod
     def create(cls, group_id: int, user_id: int, **kwargs) -> PermissionMembership:
+        """
+        Add a User to a PermissionsGroup. Returns updated list of members belonging to the group.
+
+        You must be a superuser to do this.
+        """
         response = cls.connection().post(
             cls.ENDPOINT, json={"group_id": group_id, "user_id": user_id}
         )

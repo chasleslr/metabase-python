@@ -39,6 +39,7 @@ class Dataset(CreateResource):
 
     @classmethod
     def create(cls, database: int, type: str, query: dict, **kwargs) -> Dataset:
+        """Execute a query and retrieve the results in the usual format."""
         dataset = super(Dataset, cls).create(database=database, type=type, query=query)
         dataset.data = Data(**dataset.data)
         return dataset

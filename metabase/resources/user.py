@@ -38,6 +38,15 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
 
     @classmethod
     def list(cls) -> List[User]:
+        """
+        Fetch a list of Users. By default returns every active user but only active users.
+
+        If status is deactivated, include deactivated users only. If status is all, include all users (active and inactive). Also supports include_deactivated, which if true, is equivalent to status=all. status and included_deactivated requires superuser permissions.
+
+        For users with segmented permissions, return only themselves.
+
+        Takes limit, offset for pagination. Takes query for filtering on first name, last name, email. Also takes group_id, which filters on group id.
+        """
         response = cls.connection().get(cls.ENDPOINT)
         records = [cls(**user) for user in response.json().get("data", [])]
         return records
@@ -53,6 +62,11 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
         login_attributes: Dict[str, Any] = None,
         **kwargs,
     ) -> User:
+        """
+        Create a new User, return a 400 if the email address is already taken.
+
+        You must be a superuser to do this.
+        """
         return super(User, cls).create(
             first_name=first_name,
             last_name=last_name,
@@ -68,28 +82,52 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
         first_name: str = MISSING,
         last_name: str = MISSING,
         email: str = MISSING,
-        password: str = MISSING,
         group_ids: List[int] = MISSING,
         is_superuser: bool = MISSING,
         locale: str = MISSING,
         **kwargs,
     ) -> None:
+        """Update an existing, active User."""
         return super(User, self).update(
             first_name=first_name,
             last_name=last_name,
             email=email,
-            password=password,
             group_ids=group_ids,
             locale=locale,
             **kwargs,
         )
 
+    def delete(self) -> None:
+        """
+        Disable a User. This does not remove the User from the DB, but instead disables their account.
+
+        You must be a superuser to do this.
+        """
+        return super(User, self).delete()
+
+    def password(self, password: str, old_password: str):
+        """Update a user’s password."""
+        return self.connection().put(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/password",
+            json={"password": password, "old_password": old_password},
+        )
+
     def send_invite(self):
-        self.connection().put(
+        """
+        Resend the user invite email for a given user.
+
+        You must be a superuser to do this.
+        """
+        return self.connection().put(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/send_invite"
         )
 
     def reactivate(self):
-        self.connection().put(
+        """
+        Reactivate user at :id.
+
+        You must be a superuser to do this.
+        """
+        return self.connection().put(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/reactivate"
         )

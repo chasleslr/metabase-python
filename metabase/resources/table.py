@@ -61,10 +61,12 @@ class Table(ListResource, GetResource, UpdateResource):
 
     @classmethod
     def list(cls) -> List[Table]:
+        """Get all Tables."""
         return super(Table, cls).list()
 
     @classmethod
     def get(cls, id: int) -> Table:
+        """Get Table with ID."""
         return super(Table, cls).get(id)
 
     def update(
@@ -79,6 +81,7 @@ class Table(ListResource, GetResource, UpdateResource):
         show_in_getting_started: bool = MISSING,
         **kwargs,
     ) -> None:
+        """Update Table with ID."""
         return super(Table, self).update(
             display_name=display_name,
             description=description,
@@ -90,7 +93,8 @@ class Table(ListResource, GetResource, UpdateResource):
             show_in_getting_started=show_in_getting_started,
         )
 
-    def foreign_keys(self) -> List[dict]:
+    def fks(self) -> List[dict]:
+        """Get all foreign keys whose destination is a Field that belongs to this Table."""
         return (
             self.connection()
             .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/fks")
@@ -98,6 +102,16 @@ class Table(ListResource, GetResource, UpdateResource):
         )
 
     def query_metadata(self) -> Dict[str, Any]:
+        """
+        Get metadata about a Table useful for running queries. Returns DB, fields,
+        field FKs, and field values.
+
+        Passing include_hidden_fields=true will include any hidden Fields in the response.
+        Defaults to false Passing include_sensitive_fields=true will include any sensitive
+        Fields in the response. Defaults to false.
+
+        These options are provided for use in the Admin Edit Metadata page.
+        """
         return (
             self.connection()
             .get(
@@ -109,6 +123,7 @@ class Table(ListResource, GetResource, UpdateResource):
         )
 
     def related(self) -> Dict[str, Any]:
+        """Return related entities."""
         return (
             self.connection()
             .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related")
@@ -116,19 +131,34 @@ class Table(ListResource, GetResource, UpdateResource):
         )
 
     def discard_values(self):
+        """
+        Discard the FieldValues belonging to the Fields in this Table. Only applies to
+        fields that have FieldValues. If this Table’s Database is set up to automatically
+        sync FieldValues, they will be recreated during the next cycle.
+
+        You must be a superuser to do this.
+        """
         self.connection().post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values"
         )
 
     def rescan_values(self):
+        """
+        Manually trigger an update for the FieldValues for the Fields belonging to this Table.
+        Only applies to Fields that are eligible for FieldValues.
+
+        You must be a superuser to do this.
+        """
         self.connection().post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values"
         )
 
     def fields(self) -> List[Field]:
+        """Get all Fields associated with this Table.."""
         return [Field(**field) for field in self.query_metadata().get("fields")]
 
     def dimensions(self) -> List[Dimension]:
+        """Get all Dimensions associated with this Table."""
         return [
             Dimension(id=id, **dimension)
             for id, dimension in self.query_metadata()
@@ -137,19 +167,9 @@ class Table(ListResource, GetResource, UpdateResource):
         ]
 
     def metrics(self) -> List[Metric]:
+        """Get all Metrics associated with this Table."""
         return [Metric(**metric) for metric in self.related().get("metrics")]
 
     def segments(self) -> List[Segment]:
+        """Get all Segments associated with this Table."""
         return [Segment(**segment) for segment in self.related().get("segments")]
-
-    def get_field(self, id: int) -> Field:
-        return next(filter(lambda field: field.id == id, self.fields()))
-
-    def get_dimension(self, id: str) -> Dimension:
-        return next(filter(lambda dimension: dimension.id == id, self.dimensions()))
-
-    def get_metric(self, id: int) -> Metric:
-        return next(filter(lambda metric: metric.id == id, self.metrics()))
-
-    def get_segment(self, id: int) -> Segment:
-        return next(filter(lambda segment: segment.id == id, self.segments()))

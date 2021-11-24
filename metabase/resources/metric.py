@@ -82,6 +82,7 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
         )
 
     def archive(self):
+        """Archive a Metric."""
         return self.update(
             archived=True, revision_message="Archived by metabase-python."
         )

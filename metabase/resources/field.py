@@ -112,6 +112,7 @@ class Field(GetResource, UpdateResource):
 
     @classmethod
     def get(cls, id: int) -> Field:
+        """Get Field with ID."""
         return super(Field, cls).get(id)
 
     def update(
@@ -128,6 +129,7 @@ class Field(GetResource, UpdateResource):
         coercion_strategy: str = MISSING,
         **kwargs,
     ) -> None:
+        """Update Field with ID."""
         return super(Field, self).update(
             display_name=display_name,
             description=description,
@@ -142,6 +144,7 @@ class Field(GetResource, UpdateResource):
         )
 
     def related(self) -> Dict[str, Any]:
+        """Return related entities."""
         return (
             self.connection()
             .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related")
@@ -149,11 +152,24 @@ class Field(GetResource, UpdateResource):
         )
 
     def discard_values(self):
-        self.connection().post(
+        """
+        Discard the FieldValues belonging to this Field. Only applies to fields
+        that have FieldValues. If this Field’s Database is set up to automatically
+        sync FieldValues, they will be recreated during the next cycle.
+
+        You must be a superuser to do this.
+        """
+        return self.connection().post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values"
         )
 
     def rescan_values(self):
-        self.connection().post(
+        """
+        Manually trigger an update for the FieldValues for this Field. Only applies
+        to Fields that are eligible for FieldValues.
+
+        You must be a superuser to do this.
+        """
+        return self.connection().post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values"
         )

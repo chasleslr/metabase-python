@@ -76,6 +76,7 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
         )
 
     def archive(self):
+        """Archive a Segment."""
         return self.update(
             archived=True, revision_message="Archived by metabase-python."
         )
