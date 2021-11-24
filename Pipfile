@@ -11,6 +11,8 @@ pre-commit = "*"
 pytest = "*"
 pytest-cov = "*"
 black = "*"
+build = "*"
+twine = "*"
 
 [requires]
 python_version = "3.8"
