@@ -4,12 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+metabase-python = {editable = true, path = "."}
 
 [dev-packages]
 pre-commit = "*"
 pytest = "*"
 pytest-cov = "*"
 black = "*"
+build = "*"
+twine = "*"
 
 [requires]
 python_version = "3.8"

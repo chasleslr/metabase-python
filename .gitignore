@@ -139,4 +139,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-.idea
+
+.idea/
+/metabase/_version.py

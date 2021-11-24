@@ -1,0 +1,6 @@
+version: "3.9"
+services:
+  metabase:
+    image: metabase/metabase
+    ports:
+    - 3000:3000
