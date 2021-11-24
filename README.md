@@ -5,7 +5,6 @@
 
 An unofficial Python library for the [Metabase API](https://www.metabase.com/learn/administration/metabase-api).
 
-This API is still experimental and may change significantly between minor versions.
 
 ## Installation
 
@@ -14,6 +13,8 @@ pip install metabase-python
 ```
 
 ## Usage
+This API is still experimental and may change significantly between minor versions.
+
 
 Start by creating an instance of Metabase with your credentials. This connection will automatically be used by any
 object that interacts with the Metabase API.
@@ -27,7 +28,8 @@ metabase = Metabase(
 )
 ```
 
-You can then interact with any of the supported endpoints. All changes are reflected in Metabase instantly.
+You can then interact with any of the supported endpoints through the classes included in this package. All changes
+are reflected in Metabase instantly.
 
 ```python
 from metabase import User
@@ -87,7 +89,7 @@ for user in User.list():
 ```
 
 You can also execute queries and get results back as a Pandas DataFrame. Currently, you need to provide
-the exact MBQL (i.e. Metabase Query Language) as the `query` argument -- future iterations will improve this workflow.
+the exact MBQL (i.e. Metabase Query Language) as the `query` argument.
 ```python
 from metabase import Dataset
 
