@@ -130,7 +130,7 @@ For a full list of endpoints and methods, see [Metabase API](https://www.metabas
 | Metric                |  ✅        |
 | Native query snippet  |  ❌        |
 | Notify                |  ❌        |
-| Permissions           |  ❌        |
+| Permissions           |  ✅        |
 | Premium features      |  ❌        |
 | Preview embed         |  ❌        |
 | Public                |  ❌        |
