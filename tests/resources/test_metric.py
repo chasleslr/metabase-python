@@ -1,6 +1,5 @@
-from exceptions import NotFoundError
-
-from metabase.resources.metric import Metric
+from metabase import Metric
+from metabase.exceptions import NotFoundError
 from tests.helpers import IntegrationTestCase
 
 

@@ -1,8 +1,5 @@
-from exceptions import NotFoundError
-
-from metabase import Database
-from metabase.resources.field import Field
-from metabase.resources.table import Table
+from metabase import Database, Field, Table
+from metabase.exceptions import NotFoundError
 from tests.helpers import IntegrationTestCase
 
 

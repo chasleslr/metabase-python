@@ -141,4 +141,4 @@ cython_debug/
 
 
 .idea/
-/metabase/_version.py
+/src/metabase/_version.py

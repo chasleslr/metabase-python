@@ -1,6 +1,5 @@
-from exceptions import NotFoundError
-
-from metabase import PermissionGroup, PermissionMembership
+from metabase import PermissionGroup
+from metabase.exceptions import NotFoundError
 from tests.helpers import IntegrationTestCase
 
 
