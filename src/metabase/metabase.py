@@ -2,6 +2,8 @@ from weakref import WeakValueDictionary
 
 import requests
 
+from metabase.exceptions import AuthenticationError
+
 
 class Singleton(type):
     _instances = WeakValueDictionary()
@@ -40,6 +42,10 @@ class Metabase(metaclass=Singleton):
                 self.host + "/api/session",
                 json={"username": self.user, "password": self.password},
             )
+
+            if response.status_code != 200:
+                raise AuthenticationError(response.content.decode())
+
             self._token = response.json()["id"]
 
         return self._token
