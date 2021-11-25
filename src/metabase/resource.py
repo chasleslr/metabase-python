@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from exceptions import NotFoundError
 from requests import HTTPError
 
 from metabase import Metabase
+from metabase.exceptions import NotFoundError
 from metabase.missing import MISSING
 
 

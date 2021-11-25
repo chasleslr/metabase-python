@@ -10,7 +10,7 @@ setup(
     name="metabase-python",
     use_scm_version={
         "local_scheme": "dirty-tag",
-        "write_to": "metabase/_version.py",
+        "write_to": "src/metabase/_version.py",
         "fallback_version": "0.0.0",
     },
     description="A Python wrapper for interacting with Metabase's API.",
@@ -19,9 +19,8 @@ setup(
     author="Charles Lariviere",
     author_email="charleslariviere1@gmail.com  ",
     url="https://github.com/chasleslr/metabase-python",
-    packages=find_packages("metabase"),
-    package_dir={"": "metabase"},
-    py_modules=[splitext(basename(path))[0] for path in glob("metabase/*.py")],
+    packages=find_packages("src"),
+    package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
     classifiers=[

@@ -1,8 +1,7 @@
 from random import randint
 
-from exceptions import NotFoundError
-
-from metabase.resources.user import User
+from metabase import User
+from metabase.exceptions import NotFoundError
 from tests.helpers import IntegrationTestCase
 
 
