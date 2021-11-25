@@ -1,4 +1,4 @@
-from metabase.resources.field import Field
+from metabase import Field
 from tests.helpers import IntegrationTestCase
 
 
