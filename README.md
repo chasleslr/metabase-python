@@ -118,9 +118,8 @@ For a full list of endpoints and methods, see [Metabase API](https://www.metabas
 | Automagic dashboards  |  ❌        |
 | Card                  |  ❌        |
 | Collection            |  ❌        |
-| Card                  |  ❌        |
 | Dashboard             |  ❌        |
-| Database              |  ❌        |
+| Database              |  ✅        |
 | Dataset               |  ✅        |
 | Email                 |  ❌        |
 | Embed                 |  ❌        |
