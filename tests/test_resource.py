@@ -6,7 +6,6 @@ from metabase import Metabase
 from metabase.exceptions import NotFoundError
 from metabase.missing import MISSING
 from metabase.resource import (
-    ArchiveResource,
     CreateResource,
     DeleteResource,
     GetResource,
