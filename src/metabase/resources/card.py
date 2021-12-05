@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List
 
-from metabase import User
 from metabase.missing import MISSING
 from metabase.resource import CreateResource, GetResource, ListResource, UpdateResource
 
@@ -32,7 +31,7 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
 
     embedding_params: dict
     cache_ttl: str
-    creator: User
+    creator: "User"
 
     favorite: bool
     archived: bool
