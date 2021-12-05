@@ -14,6 +14,25 @@ class CardTests(IntegrationTestCase):
 
     def test_list(self):
         """Ensure Card.list() returns a list of Card instances."""
+        # fixture
+        card = Card.create(
+            name="My Card",
+            dataset_query={
+                "type": "query",
+                "query": {
+                    "source-table": 2,
+                    "aggregation": [["count"]],
+                    "breakout": [["field", 12, {"temporal-unit": "month"}]],
+                },
+                "database": 1,
+            },
+            visualization_settings={
+                "graph.dimensions": ["CREATED_AT"],
+                "graph.metrics": ["count"],
+            },
+            display="line",
+        )
+
         cards = Card.list()
 
         self.assertIsInstance(cards, list)
