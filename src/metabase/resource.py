@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from requests import HTTPError
 
-from metabase import Metabase
 from metabase.exceptions import NotFoundError
+from metabase.metabase import Connection
 from metabase.missing import MISSING
 
 
@@ -32,24 +32,24 @@ class Resource:
         )
 
     @staticmethod
-    def connection() -> Metabase:
-        return Metabase()
+    def connection(using) -> Connection:
+        return Connection.instances[using]
 
 
 class ListResource(Resource):
     @classmethod
-    def list(cls):
+    def list(cls, using: str = "default"):
         """List all instances."""
-        response = cls.connection().get(cls.ENDPOINT)
+        response = cls.connection(using).get(cls.ENDPOINT)
         records = [cls(**record) for record in response.json()]
         return records
 
 
 class GetResource(Resource):
     @classmethod
-    def get(cls, id: int):
+    def get(cls, id: int, using: str = "default"):
         """Get a single instance by ID."""
-        response = cls.connection().get(cls.ENDPOINT + f"/{id}")
+        response = cls.connection(using).get(cls.ENDPOINT + f"/{id}")
 
         if response.status_code == 404 or response.status_code == 204:
             raise NotFoundError(f"{cls.__name__}(id={id}) was not found.")
@@ -59,9 +59,9 @@ class GetResource(Resource):
 
 class CreateResource(Resource):
     @classmethod
-    def create(cls, **kwargs):
+    def create(cls, using: str = "default", **kwargs):
         """Create an instance and save it."""
-        response = cls.connection().post(cls.ENDPOINT, json=kwargs)
+        response = cls.connection(using).post(cls.ENDPOINT, json=kwargs)
 
         if response.status_code not in (200, 202):
             raise HTTPError(response.content.decode())
@@ -70,14 +70,14 @@ class CreateResource(Resource):
 
 
 class UpdateResource(Resource):
-    def update(self, **kwargs) -> None:
+    def update(self, using: str = "default", **kwargs) -> None:
         """
         Update an instance by providing function arguments.
         Providing any argument with metabase.MISSING will result in this argument being
         ignored from the request.
         """
         params = {k: v for k, v in kwargs.items() if v != MISSING}
-        response = self.connection().put(
+        response = self.connection(using).put(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}", json=params
         )
 
@@ -89,9 +89,9 @@ class UpdateResource(Resource):
 
 
 class DeleteResource(Resource):
-    def delete(self) -> None:
+    def delete(self, using: str = "default") -> None:
         """Delete an instance."""
-        response = self.connection().delete(
+        response = self.connection(using).delete(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}"
         )
 

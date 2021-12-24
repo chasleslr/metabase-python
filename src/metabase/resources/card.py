@@ -41,7 +41,7 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
     created_at: str
 
     @classmethod
-    def list(cls) -> List[Card]:
+    def list(cls, using: str = "default") -> List[Card]:
         """
         Get all the Cards. Option filter param f can be used to change the set
         of Cards that are returned; default is all, but other options include
@@ -51,14 +51,14 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
         of each filter option. :card_index:.
         """
         # TODO: add support for endpoint parameters: f, model_id.
-        return super(Card, cls).list()
+        return super(Card, cls).list(using=using)
 
     @classmethod
-    def get(cls, id: int) -> Card:
+    def get(cls, id: int, using: str = "default") -> Card:
         """
         Get Card with ID.
         """
-        return super(Card, cls).get(id)
+        return super(Card, cls).get(id, using)
 
     @classmethod
     def create(
@@ -73,6 +73,7 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
         result_metadata: List[dict] = None,
         metadata_checksum: str = None,
         cache_ttl: int = None,
+        using: str = "default",
         **kwargs,
     ) -> Card:
         """
@@ -89,6 +90,7 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
             result_metadata=result_metadata,
             metadata_checksum=metadata_checksum,
             cache_ttl=cache_ttl,
+            using=using,
             **kwargs,
         )
 
@@ -107,6 +109,7 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
         enable_embedding: bool = MISSING,
         embedding_params: dict = MISSING,
         cache_ttl: int = None,
+        using="default",
         **kwargs,
     ) -> None:
         """
@@ -126,10 +129,11 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
             enable_embedding=enable_embedding,
             embedding_params=embedding_params,
             cache_ttl=cache_ttl,
+            using=using,
         )
 
-    def archive(self):
+    def archive(self, using: str = "default"):
         """Archive a Metric."""
         return self.update(
-            archived=True, revision_message="Archived by metabase-python."
+            archived=True, revision_message="Archived by metabase-python.", using=using
         )
