@@ -81,7 +81,7 @@ class UpdateResource(Resource):
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}", json=params
         )
 
-        if response.status_code != 200:
+        if response.status_code not in (200, 202):
             raise HTTPError(response.json())
 
         for k, v in kwargs.items():

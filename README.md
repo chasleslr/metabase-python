@@ -111,43 +111,43 @@ df = dataset.to_pandas()
 
 For a full list of endpoints and methods, see [Metabase API](https://www.metabase.com/docs/latest/api-documentation.html).
 
-| Endpoints             | Support    |
-|-----------------------|:----------:|
-| Activity              |  ❌        |
-| Alert                 |  ❌        |
-| Automagic dashboards  |  ❌        |
-| Card                  |  ❌        |
-| Collection            |  ❌        |
-| Dashboard             |  ❌        |
-| Database              |  ✅        |
-| Dataset               |  ✅        |
-| Email                 |  ❌        |
-| Embed                 |  ❌        |
-| Field                 |  ✅        |
-| Geojson               |  ❌        |
-| Ldap                  |  ❌        |
-| Login history         |  ❌        |
-| Metric                |  ✅        |
-| Native query snippet  |  ❌        |
-| Notify                |  ❌        |
-| Permissions           |  ❌        |
-| Premium features      |  ❌        |
-| Preview embed         |  ❌        |
-| Public                |  ❌        |
-| Pulse                 |  ❌        |
-| Revision              |  ❌        |
-| Search                |  ❌        |
-| Segment               |  ✅        |
-| Session               |  ❌        |
-| Setting               |  ❌        |
-| Setup                 |  ❌        |
-| Slack                 |  ❌        |
-| Table                 |  ✅        |
-| Task                  |  ❌        |
-| Tiles                 |  ❌        |
-| Transform             |  ❌        |
-| User                  |  ✅        |
-| Util                  |  ❌        |
+| Endpoints             | Support    | Notes |
+|-----------------------|:----------:|-------|
+| Activity              |  ❌        |       |
+| Alert                 |  ❌        |       |
+| Automagic dashboards  |  ❌        |       |
+| Card                  |  ⚠️        | Partial support; list/create/update/archive. Missing additional functionality (i.e. POST /api/card/:card-id:/favorite  |
+| Collection            |  ❌        |       |
+| Dashboard             |  ❌        |       |
+| Database              |  ✅        |       |
+| Dataset               |  ✅        |       |
+| Email                 |  ❌        |       |
+| Embed                 |  ❌        |       |
+| Field                 |  ✅        |       |
+| Geojson               |  ❌        |       |
+| Ldap                  |  ❌        |       |
+| Login history         |  ❌        |       |
+| Metric                |  ✅        |       |
+| Native query snippet  |  ❌        |       |
+| Notify                |  ❌        |       |
+| Permissions           |  ❌        |       |
+| Premium features      |  ❌        |       |
+| Preview embed         |  ❌        |       |
+| Public                |  ❌        |       |
+| Pulse                 |  ❌        |       |
+| Revision              |  ❌        |       |
+| Search                |  ❌        |       |
+| Segment               |  ✅        |       |
+| Session               |  ❌        |       |
+| Setting               |  ❌        |       |
+| Setup                 |  ❌        |       |
+| Slack                 |  ❌        |       |
+| Table                 |  ✅        |       |
+| Task                  |  ❌        |       |
+| Tiles                 |  ❌        |       |
+| Transform             |  ❌        |       |
+| User                  |  ✅        |       |
+| Util                  |  ❌        |       |
 
 ## Contributing
 Contributions are welcome!
