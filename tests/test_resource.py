@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 from requests import HTTPError
 
-from metabase import Metabase
 from metabase.exceptions import NotFoundError
 from metabase.missing import MISSING
 from metabase.resource import (
@@ -19,7 +18,7 @@ from tests.helpers import IntegrationTestCase
 class ResourceTests(IntegrationTestCase):
     def test_resource_initializes_all_attributes(self):
         """Ensure Resource accepts arbitrary attributes when initializing an instance."""
-        resource = Resource(a="a", b="b")
+        resource = Resource(a="a", b="b", _using=None)
 
         self.assertEqual("a", resource.a)
         self.assertEqual("b", resource.b)
@@ -31,16 +30,11 @@ class ResourceTests(IntegrationTestCase):
 
     def test_repr(self):
         """Ensure Resource repr prints all class attributes with the PRIMARY_KEY first, if any."""
-        resource = Resource(a="a", b="b", id=1)
+        resource = Resource(a="a", b="b", id=1, _using=None)
         self.assertEqual("Resource(id=1, a=a, b=b)", resource.__repr__())
 
         resource.PRIMARY_KEY = None
         self.assertEqual("Resource(a=a, b=b, id=1)", resource.__repr__())
-
-    def test_connection(self):
-        """Ensure Resource.connection() returns an instance of Metabase."""
-        resource = Resource()
-        self.assertIsInstance(resource.connection(), Metabase)
 
 
 class ListResourceTests(IntegrationTestCase):
@@ -51,7 +45,7 @@ class ListResourceTests(IntegrationTestCase):
             ENDPOINT = "/api/setting"
             PRIMARY_KEY = None
 
-        settings = Setting.list()
+        settings = Setting.list(using=self.metabase)
         self.assertIsInstance(settings, list)
         self.assertTrue(all([isinstance(s, Setting) for s in settings]))
 
@@ -63,7 +57,7 @@ class GetResourceTests(IntegrationTestCase):
         class User(GetResource):
             ENDPOINT = "/api/user"
 
-        user = User.get(1)
+        user = User.get(1, using=self.metabase)
         self.assertIsInstance(user, User)
 
     def test_get_404(self):
@@ -73,7 +67,7 @@ class GetResourceTests(IntegrationTestCase):
             ENDPOINT = "/api/user"
 
         with self.assertRaises(NotFoundError):
-            user = User.get(1234)
+            user = User.get(1234, using=self.metabase)
 
 
 class CreateResourceTests(IntegrationTestCase):
@@ -83,9 +77,13 @@ class CreateResourceTests(IntegrationTestCase):
         class Collection(CreateResource, GetResource):
             ENDPOINT = "/api/collection"
 
-        collection = Collection.create(name="My Collection", color="#123456")
+        collection = Collection.create(
+            name="My Collection", color="#123456", using=self.metabase
+        )
         self.assertIsInstance(collection, Collection)
-        self.assertIsNotNone(Collection.get(collection.id))  # metabase was updated
+        self.assertIsNotNone(
+            Collection.get(collection.id, using=self.metabase)
+        )  # metabase was updated
 
 
 class UpdateResourceTests(IntegrationTestCase):
@@ -96,15 +94,19 @@ class UpdateResourceTests(IntegrationTestCase):
             ENDPOINT = "/api/collection"
 
         # fixture
-        collection = Collection.create(name="My Collection", color="#123456")
+        collection = Collection.create(
+            name="My Collection", color="#123456", using=self.metabase
+        )
         self.assertIsInstance(collection, Collection)
-        self.assertIsNotNone(Collection.get(collection.id))
+        self.assertIsNotNone(Collection.get(collection.id, using=self.metabase))
 
         collection.update(name="My New Collection")
         self.assertEqual("My New Collection", collection.name)
 
         # metabase was updated
-        self.assertEqual("My New Collection", Collection.get(collection.id).name)
+        self.assertEqual(
+            "My New Collection", Collection.get(collection.id, using=self.metabase).name
+        )
 
     def test_update_missing(self):
         """Ensure UpdateResource.update() ignores arguments equal to MISSING."""
@@ -121,7 +123,7 @@ class UpdateResourceTests(IntegrationTestCase):
         for kwargs, expected in test_matrix:
             with patch("metabase.resource.Metabase.put") as mock:
                 try:
-                    Collection(id=1).update(**kwargs)
+                    Collection(id=1, _using=self.metabase).update(**kwargs)
                 except HTTPError:
                     pass
 
@@ -139,12 +141,12 @@ class DeleteResourceTests(IntegrationTestCase):
             ENDPOINT = "/api/permissions/group"
             PRIMARY_KEY = "id"
 
-        group = Group.create(name="My Group 4")
+        group = Group.create(name="My Group 4", using=self.metabase)
 
         self.assertIsNotNone(group)
-        self.assertIsNotNone(Group.get(group.id))
+        self.assertIsNotNone(Group.get(group.id, using=self.metabase))
 
         group.delete()
 
         with self.assertRaises(NotFoundError):
-            Group.get(group.id)
+            Group.get(group.id, using=self.metabase)

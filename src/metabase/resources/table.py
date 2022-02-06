@@ -3,6 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, List
 
+from metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import GetResource, ListResource, Resource, UpdateResource
 from metabase.resources.field import Field
@@ -60,14 +61,14 @@ class Table(ListResource, GetResource, UpdateResource):
         smart = "smart"
 
     @classmethod
-    def list(cls) -> List[Table]:
+    def list(cls, using: Metabase) -> List[Table]:
         """Get all Tables."""
-        return super(Table, cls).list()
+        return super(Table, cls).list(using=using)
 
     @classmethod
-    def get(cls, id: int) -> Table:
+    def get(cls, id: int, using: Metabase) -> Table:
         """Get Table with ID."""
-        return super(Table, cls).get(id)
+        return super(Table, cls).get(id, using=using)
 
     def update(
         self,
@@ -95,11 +96,9 @@ class Table(ListResource, GetResource, UpdateResource):
 
     def fks(self) -> List[dict]:
         """Get all foreign keys whose destination is a Field that belongs to this Table."""
-        return (
-            self.connection()
-            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/fks")
-            .json()
-        )
+        return self._using.get(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/fks"
+        ).json()
 
     def query_metadata(self) -> Dict[str, Any]:
         """
@@ -112,23 +111,15 @@ class Table(ListResource, GetResource, UpdateResource):
 
         These options are provided for use in the Admin Edit Metadata page.
         """
-        return (
-            self.connection()
-            .get(
-                self.ENDPOINT
-                + f"/{getattr(self, self.PRIMARY_KEY)}"
-                + "/query_metadata"
-            )
-            .json()
-        )
+        return self._using.get(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/query_metadata"
+        ).json()
 
     def related(self) -> Dict[str, Any]:
         """Return related entities."""
-        return (
-            self.connection()
-            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related")
-            .json()
-        )
+        return self._using.get(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related"
+        ).json()
 
     def discard_values(self):
         """
@@ -138,7 +129,7 @@ class Table(ListResource, GetResource, UpdateResource):
 
         You must be a superuser to do this.
         """
-        self.connection().post(
+        self._using.post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values"
         )
 
@@ -149,18 +140,21 @@ class Table(ListResource, GetResource, UpdateResource):
 
         You must be a superuser to do this.
         """
-        self.connection().post(
+        self._using.post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values"
         )
 
     def fields(self) -> List[Field]:
         """Get all Fields associated with this Table.."""
-        return [Field(**field) for field in self.query_metadata().get("fields")]
+        return [
+            Field(_using=self._using, **field)
+            for field in self.query_metadata().get("fields")
+        ]
 
     def dimensions(self) -> List[Dimension]:
         """Get all Dimensions associated with this Table."""
         return [
-            Dimension(id=id, **dimension)
+            Dimension(id=id, _using=self._using, **dimension)
             for id, dimension in self.query_metadata()
             .get("dimension_options", {})
             .items()
@@ -168,8 +162,14 @@ class Table(ListResource, GetResource, UpdateResource):
 
     def metrics(self) -> List[Metric]:
         """Get all Metrics associated with this Table."""
-        return [Metric(**metric) for metric in self.related().get("metrics")]
+        return [
+            Metric(_using=self._using, **metric)
+            for metric in self.related().get("metrics")
+        ]
 
     def segments(self) -> List[Segment]:
         """Get all Segments associated with this Table."""
-        return [Segment(**segment) for segment in self.related().get("segments")]
+        return [
+            Segment(_using=self._using, **segment)
+            for segment in self.related().get("segments")
+        ]

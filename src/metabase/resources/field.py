@@ -3,6 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
+from metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import GetResource, UpdateResource
 
@@ -111,9 +112,9 @@ class Field(GetResource, UpdateResource):
         sensitive = "sensitive"
 
     @classmethod
-    def get(cls, id: int) -> Field:
+    def get(cls, id: int, using: Metabase) -> Field:
         """Get Field with ID."""
-        return super(Field, cls).get(id)
+        return super(Field, cls).get(id, using=using)
 
     def update(
         self,
@@ -145,11 +146,9 @@ class Field(GetResource, UpdateResource):
 
     def related(self) -> Dict[str, Any]:
         """Return related entities."""
-        return (
-            self.connection()
-            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related")
-            .json()
-        )
+        return self._using.get(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/related"
+        ).json()
 
     def discard_values(self):
         """
@@ -159,7 +158,7 @@ class Field(GetResource, UpdateResource):
 
         You must be a superuser to do this.
         """
-        return self.connection().post(
+        return self._using.post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values"
         )
 
@@ -170,6 +169,6 @@ class Field(GetResource, UpdateResource):
 
         You must be a superuser to do this.
         """
-        return self.connection().post(
+        return self._using.post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values"
         )

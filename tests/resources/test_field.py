@@ -10,18 +10,18 @@ class FieldTests(IntegrationTestCase):
         """Ensure Field can be imported from Metabase."""
         from metabase import Field
 
-        self.assertIsNotNone(Field())
+        self.assertIsNotNone(Field(_using=None))
 
     def test_get(self):
         """Ensure Field.get() returns a Field instance for a given ID."""
-        field = Field.get(1)
+        field = Field.get(1, using=self.metabase)
 
         self.assertIsInstance(field, Field)
         self.assertEqual(1, field.id)
 
     def test_update(self):
         """Ensure Field.update() updates an existing Field in Metabase."""
-        field = Field.get(1)
+        field = Field.get(1, using=self.metabase)
 
         display_name = field.display_name
         semantic_type = field.semantic_type
@@ -32,7 +32,7 @@ class FieldTests(IntegrationTestCase):
         self.assertEqual(Field.SemanticType.zip_code, field.semantic_type)
 
         # assert metabase object is mutated
-        f = Field.get(field.id)
+        f = Field.get(field.id, using=self.metabase)
         self.assertEqual("New Name", f.display_name)
         self.assertEqual(Field.SemanticType.zip_code, f.semantic_type)
 
@@ -41,7 +41,7 @@ class FieldTests(IntegrationTestCase):
 
     def test_related(self):
         """Ensure Field.related() returns a dict."""
-        field = Field.get(1)
+        field = Field.get(1, using=self.metabase)
         related = field.related()
 
         self.assertIsInstance(related, dict)

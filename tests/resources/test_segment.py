@@ -5,7 +5,7 @@ from tests.helpers import IntegrationTestCase
 
 class SegmentTests(IntegrationTestCase):
     def tearDown(self) -> None:
-        segments = Segment.list()
+        segments = Segment.list(using=self.metabase)
         for segment in segments:
             segment.archive()
 
@@ -13,7 +13,7 @@ class SegmentTests(IntegrationTestCase):
         """Ensure Segment can be imported from Metabase."""
         from metabase import Segment
 
-        self.assertIsNotNone(Segment())
+        self.assertIsNotNone(Segment(_using=None))
 
     def test_list(self):
         """Ensure Segment.list returns a list of Segment instances."""
@@ -24,6 +24,7 @@ class SegmentTests(IntegrationTestCase):
             definition={
                 "filter": ["=", ["field", 1, None], 0],
             },
+            using=self.metabase,
         )
         _ = Segment.create(
             name="My Segment",
@@ -31,9 +32,10 @@ class SegmentTests(IntegrationTestCase):
             definition={
                 "filter": ["=", ["field", 1, None], 0],
             },
+            using=self.metabase,
         )
 
-        segments = Segment.list()
+        segments = Segment.list(using=self.metabase)
 
         self.assertIsInstance(segments, list)
         self.assertEqual(2, len(segments))
@@ -51,15 +53,16 @@ class SegmentTests(IntegrationTestCase):
             definition={
                 "filter": ["=", ["field", 1, None], 0],
             },
+            using=self.metabase,
         )
         self.assertIsInstance(segment, Segment)
 
-        m = Segment.get(segment.id)
+        m = Segment.get(segment.id, using=self.metabase)
         self.assertIsInstance(m, Segment)
         self.assertEqual(segment.id, m.id)
 
         with self.assertRaises(NotFoundError):
-            _ = Segment.get(12345)
+            _ = Segment.get(12345, using=self.metabase)
 
     def test_create(self):
         """Ensure Segment.create creates a Segment in Metabase and returns a Segment instance."""
@@ -69,6 +72,7 @@ class SegmentTests(IntegrationTestCase):
             definition={
                 "filter": ["=", ["field", 1, None], 0],
             },
+            using=self.metabase,
         )
 
         self.assertIsInstance(segment, Segment)
@@ -85,6 +89,7 @@ class SegmentTests(IntegrationTestCase):
             definition={
                 "filter": ["=", ["field", 1, None], 0],
             },
+            using=self.metabase,
         )
 
         self.assertIsInstance(segment, Segment)
@@ -95,7 +100,7 @@ class SegmentTests(IntegrationTestCase):
         self.assertEqual("New Name", segment.name)
 
         # assert metabase object is mutated
-        m = Segment.get(segment.id)
+        m = Segment.get(segment.id, using=self.metabase)
         self.assertEqual("New Name", m.name)
 
     def test_archive(self):
@@ -107,6 +112,7 @@ class SegmentTests(IntegrationTestCase):
             definition={
                 "filter": ["=", ["field", 1, None], 0],
             },
+            using=self.metabase,
         )
 
         self.assertIsInstance(segment, Segment)
@@ -117,5 +123,5 @@ class SegmentTests(IntegrationTestCase):
         self.assertEqual(True, segment.archived)
 
         # assert metabase object is mutated
-        m = Segment.get(segment.id)
+        m = Segment.get(segment.id, using=self.metabase)
         self.assertEqual(True, m.archived)

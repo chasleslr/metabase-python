@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
+from metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import CreateResource, GetResource, ListResource, UpdateResource
 
@@ -26,16 +27,17 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
     created_at: str
 
     @classmethod
-    def list(cls) -> List[Segment]:
-        return super(Segment, cls).list()
+    def list(cls, using: Metabase) -> List[Segment]:
+        return super(Segment, cls).list(using=using)
 
     @classmethod
-    def get(cls, id: int) -> Segment:
-        return super(Segment, cls).get(id)
+    def get(cls, id: int, using: Metabase) -> Segment:
+        return super(Segment, cls).get(id, using=using)
 
     @classmethod
     def create(
         cls,
+        using: Metabase,
         name: str,
         table_id: int,
         definition: dict,
@@ -43,6 +45,7 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
         **kwargs
     ) -> Segment:
         return super(Segment, cls).create(
+            using=using,
             name=name,
             table_id=table_id,
             definition=definition,
