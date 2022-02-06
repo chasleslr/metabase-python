@@ -1,21 +1,9 @@
-from weakref import WeakValueDictionary
-
 import requests
 
 from metabase.exceptions import AuthenticationError
 
 
-class Singleton(type):
-    _instances = WeakValueDictionary()
-
-    def __call__(cls, *args, **kw):
-        if cls not in cls._instances:
-            instance = super(Singleton, cls).__call__(*args, **kw)
-            cls._instances[cls] = instance
-        return cls._instances[cls]
-
-
-class Metabase(metaclass=Singleton):
+class Metabase:
     def __init__(self, host: str, user: str, password: str, token: str = None):
         self._host = host
         self.user = user
