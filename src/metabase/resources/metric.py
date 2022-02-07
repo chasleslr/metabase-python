@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List
 
+from metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import CreateResource, GetResource, ListResource, UpdateResource
 
@@ -31,16 +32,17 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
     creator: dict
 
     @classmethod
-    def list(cls) -> List[Metric]:
-        return super(Metric, cls).list()
+    def list(cls, using: Metabase) -> List[Metric]:
+        return super(Metric, cls).list(using=using)
 
     @classmethod
-    def get(cls, id: int) -> Metric:
-        return super(Metric, cls).get(id)
+    def get(cls, id: int, using: Metabase) -> Metric:
+        return super(Metric, cls).get(id, using=using)
 
     @classmethod
     def create(
         cls,
+        using: Metabase,
         name: str,
         table_id: int,
         definition: dict,
@@ -48,6 +50,7 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
         **kwargs
     ) -> Metric:
         return super(Metric, cls).create(
+            using=using,
             name=name,
             table_id=table_id,
             definition=definition,

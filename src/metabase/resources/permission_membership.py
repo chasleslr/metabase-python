@@ -4,6 +4,7 @@ from typing import List
 
 from requests import HTTPError
 
+from metabase import Metabase
 from metabase.resource import CreateResource, DeleteResource, ListResource
 
 
@@ -18,7 +19,7 @@ class PermissionMembership(ListResource, CreateResource, DeleteResource):
     # TODO: allow for bulk updates through /api/permissions/membership/graph
 
     @classmethod
-    def list(cls) -> List[PermissionMembership]:
+    def list(cls, using: Metabase) -> List[PermissionMembership]:
         """
         Fetch a map describing the group memberships of various users. This map’s format is:
 
@@ -26,21 +27,23 @@ class PermissionMembership(ListResource, CreateResource, DeleteResource):
                      :group_id      <id>}]}.
         You must be a superuser to do this.
         """
-        response = cls.connection().get(cls.ENDPOINT)
+        response = using.get(cls.ENDPOINT)
         all_memberships = [
             item for sublist in response.json().values() for item in sublist
         ]
-        records = [cls(**record) for record in all_memberships]
+        records = [cls(_using=using, **record) for record in all_memberships]
         return records
 
     @classmethod
-    def create(cls, group_id: int, user_id: int, **kwargs) -> PermissionMembership:
+    def create(
+        cls, using: Metabase, group_id: int, user_id: int, **kwargs
+    ) -> PermissionMembership:
         """
         Add a User to a PermissionsGroup. Returns updated list of members belonging to the group.
 
         You must be a superuser to do this.
         """
-        response = cls.connection().post(
+        response = using.post(
             cls.ENDPOINT, json={"group_id": group_id, "user_id": user_id}
         )
 
@@ -50,4 +53,4 @@ class PermissionMembership(ListResource, CreateResource, DeleteResource):
         # metabase returns a list of all memberships for the given group_id
         membership = next(filter(lambda x: x["user_id"] == user_id, response.json()))
 
-        return cls(**membership)
+        return cls(_using=using, **membership)

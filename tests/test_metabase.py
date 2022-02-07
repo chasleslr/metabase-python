@@ -6,15 +6,6 @@ from tests.helpers import IntegrationTestCase
 
 
 class MetabaseTests(TestCase):
-    def test_singleton(self):
-        """Ensure Metabase acts as a singleton; the same instance is always returned when instantiated."""
-        metabase = Metabase(host="", user="", password="")
-        metabase1 = Metabase()
-
-        self.assertEqual(metabase, metabase1)
-        self.assertEqual(metabase.host, metabase1.host)
-        self.assertEqual(Metabase(), Metabase())
-
     def test_host(self):
         """Ensure Metabase.host adds https:// and trims trailing /."""
         metabase = Metabase(host="example.com/", user="", password="")

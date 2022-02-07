@@ -4,6 +4,7 @@ from typing import Any, List
 
 import pandas as pd
 
+from metabase import Metabase
 from metabase.resource import CreateResource, Resource
 
 
@@ -37,10 +38,14 @@ class Dataset(CreateResource):
     average_execution_time: int = None
 
     @classmethod
-    def create(cls, database: int, type: str, query: dict, **kwargs) -> Dataset:
+    def create(
+        cls, using: Metabase, database: int, type: str, query: dict, **kwargs
+    ) -> Dataset:
         """Execute a query and retrieve the results in the usual format."""
-        dataset = super(Dataset, cls).create(database=database, type=type, query=query)
-        dataset.data = Data(**dataset.data)
+        dataset = super(Dataset, cls).create(
+            using=using, database=database, type=type, query=query
+        )
+        dataset.data = Data(_using=using, **dataset.data)
         return dataset
 
     def to_pandas(self) -> pd.DataFrame:

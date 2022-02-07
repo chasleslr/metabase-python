@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
+from metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import CreateResource, GetResource, ListResource, UpdateResource
 
@@ -41,7 +42,7 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
     created_at: str
 
     @classmethod
-    def list(cls) -> List[Card]:
+    def list(cls, using: Metabase) -> List[Card]:
         """
         Get all the Cards. Option filter param f can be used to change the set
         of Cards that are returned; default is all, but other options include
@@ -51,18 +52,19 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
         of each filter option. :card_index:.
         """
         # TODO: add support for endpoint parameters: f, model_id.
-        return super(Card, cls).list()
+        return super(Card, cls).list(using)
 
     @classmethod
-    def get(cls, id: int) -> Card:
+    def get(cls, id: int, using: Metabase) -> Card:
         """
         Get Card with ID.
         """
-        return super(Card, cls).get(id)
+        return super(Card, cls).get(id, using)
 
     @classmethod
     def create(
         cls,
+        using: Metabase,
         name: str,
         dataset_query: dict,  # TODO: DatasetQuery
         visualization_settings: dict,  # TODO: VisualizationSettings
@@ -79,6 +81,7 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
         Create a new Card.
         """
         return super(Card, cls).create(
+            using=using,
             name=name,
             dataset_query=dataset_query,
             visualization_settings=visualization_settings,
@@ -129,7 +132,7 @@ class Card(ListResource, CreateResource, GetResource, UpdateResource):
         )
 
     def archive(self):
-        """Archive a Metric."""
+        """Archive a Card."""
         return self.update(
             archived=True, revision_message="Archived by metabase-python."
         )
