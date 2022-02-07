@@ -119,7 +119,7 @@ For a full list of endpoints and methods, see [Metabase API](https://www.metabas
 | Activity              |  ❌        |       |
 | Alert                 |  ❌        |       |
 | Automagic dashboards  |  ❌        |       |
-| Card                  |  ⚠️        | Partial support; list/create/update/archive. Missing additional functionality (i.e. POST /api/card/:card-id:/favorite  |
+| Card                  |  ✅        |       |
 | Collection            |  ❌        |       |
 | Dashboard             |  ❌        |       |
 | Database              |  ✅        |       |
