@@ -11,8 +11,9 @@ class Resource:
     ENDPOINT: str
     PRIMARY_KEY: str = "id"
 
-    def __init__(self, **kwargs):
+    def __init__(self, _using: Metabase, **kwargs):
         self._attributes = []
+        self._using = _using
 
         for k, v in kwargs.items():
             self._attributes.append(k)
@@ -31,42 +32,38 @@ class Resource:
             + ")"
         )
 
-    @staticmethod
-    def connection() -> Metabase:
-        return Metabase()
-
 
 class ListResource(Resource):
     @classmethod
-    def list(cls):
+    def list(cls, using: Metabase):
         """List all instances."""
-        response = cls.connection().get(cls.ENDPOINT)
-        records = [cls(**record) for record in response.json()]
+        response = using.get(cls.ENDPOINT)
+        records = [cls(_using=using, **record) for record in response.json()]
         return records
 
 
 class GetResource(Resource):
     @classmethod
-    def get(cls, id: int):
+    def get(cls, id: int, using: Metabase):
         """Get a single instance by ID."""
-        response = cls.connection().get(cls.ENDPOINT + f"/{id}")
+        response = using.get(cls.ENDPOINT + f"/{id}")
 
         if response.status_code == 404 or response.status_code == 204:
             raise NotFoundError(f"{cls.__name__}(id={id}) was not found.")
 
-        return cls(**response.json())
+        return cls(_using=using, **response.json())
 
 
 class CreateResource(Resource):
     @classmethod
-    def create(cls, **kwargs):
+    def create(cls, using: Metabase, **kwargs):
         """Create an instance and save it."""
-        response = cls.connection().post(cls.ENDPOINT, json=kwargs)
+        response = using.post(cls.ENDPOINT, json=kwargs)
 
         if response.status_code not in (200, 202):
             raise HTTPError(response.content.decode())
 
-        return cls(**response.json())
+        return cls(_using=using, **response.json())
 
 
 class UpdateResource(Resource):
@@ -77,11 +74,11 @@ class UpdateResource(Resource):
         ignored from the request.
         """
         params = {k: v for k, v in kwargs.items() if v != MISSING}
-        response = self.connection().put(
+        response = self._using.put(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}", json=params
         )
 
-        if response.status_code != 200:
+        if response.status_code not in (200, 202):
             raise HTTPError(response.json())
 
         for k, v in kwargs.items():
@@ -91,7 +88,7 @@ class UpdateResource(Resource):
 class DeleteResource(Resource):
     def delete(self) -> None:
         """Delete an instance."""
-        response = self.connection().delete(
+        response = self._using.delete(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}"
         )
 

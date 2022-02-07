@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
+from metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import (
     CreateResource,
@@ -47,18 +48,19 @@ class Database(
     created_at: str
 
     @classmethod
-    def list(cls) -> List[Database]:
-        response = cls.connection().get(cls.ENDPOINT)
-        records = [cls(**db) for db in response.json().get("data", [])]
+    def list(cls, using: Metabase) -> List[Database]:
+        response = using.get(cls.ENDPOINT)
+        records = [cls(_using=using, **db) for db in response.json().get("data", [])]
         return records
 
     @classmethod
-    def get(cls, id: int) -> Database:
-        return super(Database, cls).get(id)
+    def get(cls, id: int, using: Metabase) -> Database:
+        return super(Database, cls).get(id, using=using)
 
     @classmethod
     def create(
         cls,
+        using: Metabase,
         name: str,
         engine: str,
         details: dict,
@@ -75,6 +77,7 @@ class Database(
         You must be a superuser to do this.
         """
         return super(Database, cls).create(
+            using=using,
             name=name,
             engine=engine,
             details=details,
@@ -128,43 +131,33 @@ class Database(
 
     def fields(self) -> List[Field]:
         """Get a list of all Fields in Database."""
-        fields = (
-            self.connection()
-            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/fields")
-            .json()
-        )
-        return [Field(**payload) for payload in fields]
+        fields = self._using.get(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/fields"
+        ).json()
+        return [Field(_using=self._using, **payload) for payload in fields]
 
     def idfields(self) -> List[Field]:
         """Get a list of all primary key Fields for Database."""
-        fields = (
-            self.connection()
-            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/idfields")
-            .json()
-        )
-        return [Field(**payload) for payload in fields]
+        fields = self._using.get(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/idfields"
+        ).json()
+        return [Field(_using=self._using, **payload) for payload in fields]
 
     def schemas(self) -> List[str]:
         """Returns a list of all the schemas found for the database id."""
-        return (
-            self.connection()
-            .get(self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/schemas")
-            .json()
-        )
+        return self._using.get(
+            self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/schemas"
+        ).json()
 
     def tables(self, schema: str) -> List[Table]:
         """Returns a list of Tables for the given Database id and schema."""
-        tables = (
-            self.connection()
-            .get(
-                self.ENDPOINT
-                + f"/{getattr(self, self.PRIMARY_KEY)}"
-                + "/schema"
-                + f"/{schema}"
-            )
-            .json()
-        )
-        return [Table(**payload) for payload in tables]
+        tables = self._using.get(
+            self.ENDPOINT
+            + f"/{getattr(self, self.PRIMARY_KEY)}"
+            + "/schema"
+            + f"/{schema}"
+        ).json()
+        return [Table(_using=self._using, **payload) for payload in tables]
 
     def discard_values(self):
         """
@@ -172,7 +165,7 @@ class Database(
 
         You must be a superuser to do this.
         """
-        return self.connection().post(
+        return self._using.post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/discard_values"
         )
 
@@ -182,13 +175,13 @@ class Database(
 
         You must be a superuser to do this.
         """
-        return self.connection().post(
+        return self._using.post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/rescan_values"
         )
 
     def sync(self):
         """Update the metadata for this Database. This happens asynchronously."""
-        return self.connection().post(
+        return self._using.post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/sync"
         )
 
@@ -198,6 +191,6 @@ class Database(
 
         You must be a superuser to do this.
         """
-        return self.connection().post(
+        return self._using.post(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/sync_schema"
         )

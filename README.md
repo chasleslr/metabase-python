@@ -16,8 +16,7 @@ pip install metabase-python
 This API is still experimental and may change significantly between minor versions.
 
 
-Start by creating an instance of Metabase with your credentials. This connection will automatically be used by any
-object that interacts with the Metabase API.
+Start by creating an instance of Metabase with your credentials.
 ```python
 from metabase import Metabase
 
@@ -28,17 +27,18 @@ metabase = Metabase(
 )
 ```
 
-You can then interact with any of the supported endpoints through the classes included in this package. All changes
-are reflected in Metabase instantly.
+You can then interact with any of the supported endpoints through the classes included in this package. Methods that
+instantiate an object from the Metabase API require the `using` parameter which expects an instance of `Metabase` such
+as the one we just instantiated above. All changes are reflected in Metabase instantly.
 
 ```python
 from metabase import User
 
 # get all objects
-users = User.list()
+users = User.list(using=metabase)
 
 # get an object by ID
-user = User.get(1)
+user = User.get(1, using=metabase)
 
 # attributes are automatically loaded and available in the instance
 if user.is_active:
@@ -52,6 +52,7 @@ user.delete()
 
 # create an object
 new_user = User.create(
+    using=metabase,
     first_name="<first_name>",
     last_name="<last_name>",
     email="<email>",
@@ -67,7 +68,7 @@ Some endpoints also support additional methods:
 ```python
 from metabase import User
 
-user = User.get(1)
+user = User.get(1, using=metabase)
 
 user.reactivate()   # Reactivate user
 user.send_invite()  # Resend the user invite email for a given user.
@@ -78,11 +79,12 @@ Here's a slightly more advanced example:
 from metabase import User, PermissionGroup, PermissionMembership
 
 # create a new PermissionGroup
-my_group = PermissionGroup.create(name="My Group")
+my_group = PermissionGroup.create(name="My Group", using=metabase)
 
 for user in User.list():
     # add all users to my_group
     PermissionMembership.create(
+        using=metabase,
         group_id=my_group.id,
         user_id=user.id
     )
@@ -94,6 +96,7 @@ the exact MBQL (i.e. Metabase Query Language) as the `query` argument.
 from metabase import Dataset
 
 dataset = Dataset.create(
+    using.metabase,
     database=1,
     type="query",
     query={
@@ -111,44 +114,43 @@ df = dataset.to_pandas()
 
 For a full list of endpoints and methods, see [Metabase API](https://www.metabase.com/docs/latest/api-documentation.html).
 
-| Endpoints             | Support    |
-|-----------------------|:----------:|
-| Activity              |  ❌        |
-| Alert                 |  ❌        |
-| Automagic dashboards  |  ❌        |
-| Card                  |  ❌        |
-| Collection            |  ❌        |
-| Card                  |  ❌        |
-| Dashboard             |  ❌        |
-| Database              |  ❌        |
-| Dataset               |  ✅        |
-| Email                 |  ❌        |
-| Embed                 |  ❌        |
-| Field                 |  ✅        |
-| Geojson               |  ❌        |
-| Ldap                  |  ❌        |
-| Login history         |  ❌        |
-| Metric                |  ✅        |
-| Native query snippet  |  ❌        |
-| Notify                |  ❌        |
-| Permissions           |  ❌        |
-| Premium features      |  ❌        |
-| Preview embed         |  ❌        |
-| Public                |  ❌        |
-| Pulse                 |  ❌        |
-| Revision              |  ❌        |
-| Search                |  ❌        |
-| Segment               |  ✅        |
-| Session               |  ❌        |
-| Setting               |  ❌        |
-| Setup                 |  ❌        |
-| Slack                 |  ❌        |
-| Table                 |  ✅        |
-| Task                  |  ❌        |
-| Tiles                 |  ❌        |
-| Transform             |  ❌        |
-| User                  |  ✅        |
-| Util                  |  ❌        |
+| Endpoints             | Support    | Notes |
+|-----------------------|:----------:|-------|
+| Activity              |  ❌        |       |
+| Alert                 |  ❌        |       |
+| Automagic dashboards  |  ❌        |       |
+| Card                  |  ✅        |       |
+| Collection            |  ❌        |       |
+| Dashboard             |  ❌        |       |
+| Database              |  ✅        |       |
+| Dataset               |  ✅        |       |
+| Email                 |  ❌        |       |
+| Embed                 |  ❌        |       |
+| Field                 |  ✅        |       |
+| Geojson               |  ❌        |       |
+| Ldap                  |  ❌        |       |
+| Login history         |  ❌        |       |
+| Metric                |  ✅        |       |
+| Native query snippet  |  ❌        |       |
+| Notify                |  ❌        |       |
+| Permissions           |  ✅        |       |
+| Premium features      |  ❌        |       |
+| Preview embed         |  ❌        |       |
+| Public                |  ❌        |       |
+| Pulse                 |  ❌        |       |
+| Revision              |  ❌        |       |
+| Search                |  ❌        |       |
+| Segment               |  ✅        |       |
+| Session               |  ❌        |       |
+| Setting               |  ❌        |       |
+| Setup                 |  ❌        |       |
+| Slack                 |  ❌        |       |
+| Table                 |  ✅        |       |
+| Task                  |  ❌        |       |
+| Tiles                 |  ❌        |       |
+| Transform             |  ❌        |       |
+| User                  |  ✅        |       |
+| Util                  |  ❌        |       |
 
 ## Contributing
 Contributions are welcome!

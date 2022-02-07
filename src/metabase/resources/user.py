@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Dict, List
 
+from metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import (
     CreateResource,
@@ -37,7 +38,7 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
     updated_at: datetime
 
     @classmethod
-    def list(cls) -> List[User]:
+    def list(cls, using: Metabase) -> List[User]:
         """
         Fetch a list of Users. By default returns every active user but only active users.
 
@@ -47,13 +48,16 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
 
         Takes limit, offset for pagination. Takes query for filtering on first name, last name, email. Also takes group_id, which filters on group id.
         """
-        response = cls.connection().get(cls.ENDPOINT)
-        records = [cls(**user) for user in response.json().get("data", [])]
+        response = using.get(cls.ENDPOINT)
+        records = [
+            cls(_using=using, **user) for user in response.json().get("data", [])
+        ]
         return records
 
     @classmethod
     def create(
         cls,
+        using: Metabase,
         first_name: str,
         last_name: str,
         email: str,
@@ -68,6 +72,7 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
         You must be a superuser to do this.
         """
         return super(User, cls).create(
+            using=using,
             first_name=first_name,
             last_name=last_name,
             email=email,
@@ -107,7 +112,7 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
 
     def password(self, password: str, old_password: str):
         """Update a user’s password."""
-        return self.connection().put(
+        return self._using.put(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/password",
             json={"password": password, "old_password": old_password},
         )
@@ -118,7 +123,7 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
 
         You must be a superuser to do this.
         """
-        return self.connection().put(
+        return self._using.put(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/send_invite"
         )
 
@@ -128,6 +133,6 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
 
         You must be a superuser to do this.
         """
-        return self.connection().put(
+        return self._using.put(
             self.ENDPOINT + f"/{getattr(self, self.PRIMARY_KEY)}" + "/reactivate"
         )

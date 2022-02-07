@@ -1,20 +1,11 @@
 from unittest import TestCase
 
 from metabase import Metabase
-
+from metabase.exceptions import AuthenticationError
 from tests.helpers import IntegrationTestCase
 
 
 class MetabaseTests(TestCase):
-    def test_singleton(self):
-        """Ensure Metabase acts as a singleton; the same instance is always returned when instantiated."""
-        metabase = Metabase(host="", user="", password="")
-        metabase1 = Metabase()
-
-        self.assertEqual(metabase, metabase1)
-        self.assertEqual(metabase.host, metabase1.host)
-        self.assertEqual(Metabase(), Metabase())
-
     def test_host(self):
         """Ensure Metabase.host adds https:// and trims trailing /."""
         metabase = Metabase(host="example.com/", user="", password="")
@@ -27,10 +18,17 @@ class MetabaseTests(TestCase):
 
     def test_token(self):
         """Ensure Metabase.token returns Metabase._token if not None, else gets a new token."""
-        metabase = Metabase(host="example.co.", user="", password="", token="123")
+        metabase = Metabase(host="example.com", user="", password="", token="123")
         self.assertEqual(metabase.token, "123")
 
         # TODO: add test case when token is None
+
+    def test_token_invalid_auth(self):
+        """Ensure Metabase.token raises AuthenticationException is the user or password is invalid."""
+        metabase = Metabase(host="http://0.0.0.0:3000", user="", password="")
+
+        with self.assertRaises(AuthenticationError):
+            _ = metabase.token
 
     def test_headers(self):
         """Ensure Metabase.headers returns a dictionary with the token."""

@@ -1,4 +1,5 @@
 from metabase.metabase import Metabase
+from metabase.resources.card import Card
 from metabase.resources.database import Database
 from metabase.resources.dataset import Dataset
 from metabase.resources.field import Field

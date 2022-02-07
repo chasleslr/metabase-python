@@ -12,11 +12,11 @@ class TableTests(IntegrationTestCase):
         """Ensure Table can be imported from Metabase."""
         from metabase import Table
 
-        self.assertIsNotNone(Table())
+        self.assertIsNotNone(Table(_using=None))
 
     def test_list(self):
         """Ensure Table.list() returns a list of Table instances."""
-        tables = Table.list()
+        tables = Table.list(using=self.metabase)
 
         self.assertIsInstance(tables, list)
         self.assertTrue(len(tables) > 0)
@@ -24,14 +24,14 @@ class TableTests(IntegrationTestCase):
 
     def test_get(self):
         """Ensure Table.get() returns a Table instance for a given ID."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
 
         self.assertIsInstance(table, Table)
         self.assertEqual(1, table.id)
 
     def test_update(self):
         """Ensure Table.update() updates an existing Table in Metabase."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
 
         display_name = table.display_name
         table.update(display_name="New Name")
@@ -40,7 +40,7 @@ class TableTests(IntegrationTestCase):
         self.assertEqual("New Name", table.display_name)
 
         # assert metabase object is mutated
-        t = Table.get(table.id)
+        t = Table.get(table.id, using=self.metabase)
         self.assertEqual("New Name", t.display_name)
 
         # teardown
@@ -48,7 +48,7 @@ class TableTests(IntegrationTestCase):
 
     def test_foreign_keys(self):
         """Ensure Table.fks() returns a list of foreign keys as dict."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
         fks = table.fks()
 
         self.assertIsInstance(fks, list)
@@ -57,14 +57,14 @@ class TableTests(IntegrationTestCase):
 
     def test_query_metadata(self):
         """Ensure Table.query_metadata() returns a dict."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
         query_metadata = table.query_metadata()
 
         self.assertIsInstance(query_metadata, dict)
 
     def test_related(self):
         """Ensure Table.related() returns a dict."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
         related = table.related()
 
         self.assertIsInstance(related, dict)
@@ -79,7 +79,7 @@ class TableTests(IntegrationTestCase):
 
     def test_fields(self):
         """Ensure Table.fields() returns a list of Field instances."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
         fields = table.fields()
 
         self.assertIsInstance(fields, list)
@@ -88,7 +88,7 @@ class TableTests(IntegrationTestCase):
 
     def test_dimensions(self):
         """Ensure Table.dimensions() returns a list of Dimension instances."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
         dimensions = table.dimensions()
 
         self.assertIsInstance(dimensions, list)
@@ -97,7 +97,7 @@ class TableTests(IntegrationTestCase):
 
     def test_metrics(self):
         """Ensure Table.metrics() returns a list of Metric instances."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
         metrics = table.metrics()
 
         self.assertIsInstance(metrics, list)
@@ -110,6 +110,7 @@ class TableTests(IntegrationTestCase):
             definition={
                 "aggregation": [["count"]],
             },
+            using=self.metabase,
         )
 
         metrics = table.metrics()
@@ -122,7 +123,7 @@ class TableTests(IntegrationTestCase):
 
     def test_segments(self):
         """Ensure Table.segments() returns a list of Segment instances."""
-        table = Table.get(1)
+        table = Table.get(1, using=self.metabase)
         segments = table.segments()
 
         self.assertIsInstance(segments, list)
@@ -135,6 +136,7 @@ class TableTests(IntegrationTestCase):
             definition={
                 "filter": ["=", ["field", 1, None], 0],
             },
+            using=self.metabase,
         )
 
         segments = table.segments()
