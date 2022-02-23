@@ -1,9 +1,7 @@
-from enum import Enum
-
-from metabase.mbql.base import Field
+from metabase.mbql.base import Mbql, Option
 
 
-class TemporalOption(Enum):
+class TemporalOption(Option):
     MINUTE = {"temporal-unit": "minute"}
     HOUR = {"temporal-unit": "hour"}
     DAY = {"temporal-unit": "day"}
@@ -21,7 +19,7 @@ class TemporalOption(Enum):
     QUARTER_OF_YEAR = {"temporal-unit": "quarter-of-year"}
 
 
-class BinOption(Enum):
+class BinOption(Option):
     AUTO = {"binning": {"strategy": "default"}}
     BINS_10 = {"binning": {"strategy": "num-bins", "num-bins": 10}}
     BINS_50 = {"binning": {"strategy": "num-bins", "num-bins": 50}}
@@ -29,16 +27,5 @@ class BinOption(Enum):
     NONE = None
 
 
-class GroupBy(Field):
-    def __init__(self, field_id: int, option=None):
-        super(GroupBy, self).__init__(id=field_id, option=option)
-
-
-class TemporalGroupBy(GroupBy):
-    def __init__(self, field_id: int, option: TemporalOption):
-        super(TemporalGroupBy, self).__init__(field_id=field_id, option=option.value)
-
-
-class BinnedGroupBy(GroupBy):
-    def __init__(self, field_id: int, option: BinOption):
-        super(BinnedGroupBy, self).__init__(field_id=field_id, option=option.value)
+class GroupBy(Mbql):
+    pass
