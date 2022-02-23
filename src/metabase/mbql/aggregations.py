@@ -1,32 +1,52 @@
+from typing import List
+
 from metabase.mbql.base import Mbql
 
 
 class Aggregation(Mbql):
-    mbql: str
+    function: str
 
-    def compile(self):
-        return [self.mbql]
-
-
-class ColumnAggregation(Aggregation):
-    def __init__(self, field_id: int):
-        self.field_id = field_id
-
-    def compile(self):
-        return [self.mbql, ["field", self.field_id, None]]
+    def compile(self) -> List:
+        return [self.function, super(Aggregation, self).compile()]
 
 
 class Count(Aggregation):
-    mbql = "count"
+    function = "count"
+
+    def __init__(self, id: int = None):
+        self.id = id
+
+    def compile(self) -> List:
+        return [self.function]
 
 
-class Sum(ColumnAggregation):
-    mbql = "sum"
+class Sum(Aggregation):
+    function = "sum"
 
 
-class Max(ColumnAggregation):
-    mbql = "max"
+class Average(Aggregation):
+    function = "avg"
 
 
-class Min(ColumnAggregation):
-    mbql = "min"
+class Distinct(Aggregation):
+    function = "distinct"
+
+
+class CumulativeSum(Aggregation):
+    function = "cum-sum"
+
+
+class CumulativeCount(Aggregation):
+    function = "cum-count"
+
+
+class StandardDeviation(Aggregation):
+    function = "stddev"
+
+
+class Min(Aggregation):
+    function = "min"
+
+
+class Max(Aggregation):
+    function = "max"
