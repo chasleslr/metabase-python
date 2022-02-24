@@ -34,7 +34,7 @@ class DatabaseTests(IntegrationTestCase):
             name="Test",
             engine="h2",
             details={
-                "db": "zip:/app/metabase.jar!/sample-dataset.db;USER=GUEST;PASSWORD=guest"
+                "db": "zip:/app/metabase.jar!/sample-database.db;USER=GUEST;PASSWORD=guest"
             },
         )
 
@@ -72,7 +72,7 @@ class DatabaseTests(IntegrationTestCase):
             name="Test",
             engine="h2",
             details={
-                "db": "zip:/app/metabase.jar!/sample-dataset.db;USER=GUEST;PASSWORD=guest"
+                "db": "zip:/app/metabase.jar!/sample-database.db;USER=GUEST;PASSWORD=guest"
             },
         )
         self.assertIsInstance(database, Database)
