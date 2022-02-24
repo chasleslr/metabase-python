@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import requests
 
-from metabase import Metabase
+from metabase.metabase import Metabase
 
 
 class IntegrationTestCase(TestCase):

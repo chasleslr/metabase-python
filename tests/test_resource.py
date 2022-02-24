@@ -2,8 +2,8 @@ from unittest.mock import patch
 
 from requests import HTTPError
 
-from metabase import Metabase
 from metabase.exceptions import NotFoundError
+from metabase.metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import (
     CreateResource,

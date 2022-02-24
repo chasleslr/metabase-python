@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from metabase import Metabase
 from metabase.exceptions import AuthenticationError
+from metabase.metabase import Metabase
 from tests.helpers import IntegrationTestCase
 
 
