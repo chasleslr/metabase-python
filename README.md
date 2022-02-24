@@ -13,8 +13,8 @@ pip install metabase-python
 ```
 
 ## Usage
-This API is still experimental and may change significantly between minor versions.
 
+### Connection
 
 Start by creating an instance of Metabase with your credentials.
 ```python
@@ -27,6 +27,7 @@ metabase = Metabase(
 )
 ```
 
+### Interacting with Endpoints
 You can then interact with any of the supported endpoints through the classes included in this package. Methods that
 instantiate an object from the Metabase API require the `using` parameter which expects an instance of `Metabase` such
 as the one we just instantiated above. All changes are reflected in Metabase instantly.
@@ -84,11 +85,13 @@ my_group = PermissionGroup.create(name="My Group", using=metabase)
 for user in User.list():
     # add all users to my_group
     PermissionMembership.create(
-        using=metabase,
         group_id=my_group.id,
-        user_id=user.id
+        user_id=user.id,
+        using=metabase,
     )
 ```
+
+### Querying & MBQL
 
 You can also execute queries and get results back as a Pandas DataFrame. You can provide the exact MBQL, or use
 the `Query` object to compile MBQL (i.e. Metabase Query Language) from Python classes included in this package.
@@ -97,7 +100,6 @@ the `Query` object to compile MBQL (i.e. Metabase Query Language) from Python cl
 from metabase import Dataset, Query, Count, GroupBy, TemporalOption
 
 dataset = Dataset.create(
-    using.metabase,
     database=1,
     type="query",
     query={
@@ -105,6 +107,7 @@ dataset = Dataset.create(
         "aggregation": [["count"]],
         "breakout": ["field", 7, {"temporal-unit": "year"},],
     },
+    using=metabase,
 )
 
 # compile the MBQL above using the Query object
@@ -116,6 +119,7 @@ dataset = Dataset.create(
         aggregations=[Count()],
         group_by=[GroupBy(id=7, option=TemporalOption.YEAR)]
     ).compile(),
+    using=metabase
 )
 
 df = dataset.to_pandas()
@@ -174,7 +178,8 @@ metric = Metric.create(
         table_id=1,
         aggregations=[Count()],
         filters=[EndsWith(id=4, value="@gmail.com", option=CaseOption.CASE_INSENSITIVE)]
-    ).compile()
+    ).compile(),
+    using=metabase
 )
 ```
 
