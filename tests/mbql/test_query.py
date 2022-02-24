@@ -4,6 +4,7 @@ from metabase.mbql.aggregations import Count, Max
 from metabase.mbql.filter import Equal
 from metabase.mbql.groupby import GroupBy
 from metabase.mbql.query import Query
+from metabase.resources.metric import Metric
 
 
 class QueryTests(TestCase):

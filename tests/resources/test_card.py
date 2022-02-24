@@ -1,4 +1,4 @@
-from metabase import Card
+from metabase.resources.card import Card
 from tests.helpers import IntegrationTestCase
 
 

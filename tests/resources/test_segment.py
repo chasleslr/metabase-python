@@ -1,5 +1,5 @@
-from metabase import Segment
 from metabase.exceptions import NotFoundError
+from metabase.resources.segment import Segment
 from tests.helpers import IntegrationTestCase
 
 
