@@ -121,13 +121,14 @@ df = dataset.to_pandas()
 As shown above, the `Query` object allows you to easily compile MBQL from Python objects. Here is a
 more complete example:
 ```python
-from metabase import Query, Sum, Average, Greater, GroupBy, BinOption, TemporalOption
+from metabase import Query, Sum, Average, Metric, Greater, GroupBy, BinOption, TemporalOption
 
 query = Query(
     table_id=5,
     aggregations=[
         Sum(id=5),                                  # Provide the ID for the Metabase field
-        Average(id=5, name="Average of Price")      # Optionally, you can provide a name
+        Average(id=5, name="Average of Price"),     # Optionally, you can provide a name
+        Metric.get(5)                               # You can also provide your Metabase Metrics
     ],
     filters=[
         Greater(id=1, value=5.5)                    # Filter for values of FieldID 1 greater than 5.5
@@ -144,7 +145,8 @@ print(query.compile())
     'source-table': 5,
     'aggregation': [
         ['sum', ['field', 5, None]],
-        ['aggregation-options', ['avg', ['field', 5, None]], {'name': 'Average of Price', 'display-name': 'Average of Price'}]
+        ['aggregation-options', ['avg', ['field', 5, None]], {'name': 'Average of Price', 'display-name': 'Average of Price'}],
+        ["metric", 5]
     ],
     'breakout': [
         ['field', 4, None],
