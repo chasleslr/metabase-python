@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List
 
-from metabase import Metabase
+from metabase.metabase import Metabase
 from metabase.missing import MISSING
 from metabase.resource import CreateResource, GetResource, ListResource, UpdateResource
 
