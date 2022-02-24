@@ -1,15 +1,16 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Union
 
 from metabase.mbql.aggregations import Aggregation
 from metabase.mbql.filter import Filter
 from metabase.mbql.groupby import GroupBy
+from metabase.resources.metric import Metric
 
 
 @dataclass
 class Query:
     table_id: int
-    aggregations: List[Aggregation]
+    aggregations: List[Union[Aggregation, Metric]]
     group_by: List[GroupBy] = field(default_factory=list)
     filters: List[Filter] = field(default_factory=list)
 
@@ -23,7 +24,14 @@ class Query:
 
     @property
     def _aggregations(self):
-        return [aggregation.compile() for aggregation in self.aggregations]
+        aggregations = []
+        for aggregation in self.aggregations:
+            if isinstance(aggregation, Metric):
+                aggregations.append(["metric", aggregation.id])
+            else:
+                aggregations.append(aggregation.compile())
+
+        return aggregations
 
     @property
     def _group_by(self):

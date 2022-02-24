@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from metabase import Metric
 from metabase.mbql.aggregations import Count, Max
 from metabase.mbql.filter import Equal
 from metabase.mbql.groupby import GroupBy
@@ -40,6 +41,12 @@ class QueryTests(TestCase):
             aggregations=[Count(), Max(5)],
         )
         self.assertEqual([["count"], ["max", ["field", 5, None]]], query._aggregations)
+
+        query = Query(
+            table_id=12,
+            aggregations=[Count(), Metric(id=4)],
+        )
+        self.assertEqual([["count"], ["metric", 4]], query._aggregations)
 
     def test__group_by(self):
         """Ensure Query._group_by returns a list of compiled GroupBy."""
