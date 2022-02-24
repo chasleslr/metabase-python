@@ -45,7 +45,7 @@ class QueryTests(TestCase):
 
         query = Query(
             table_id=12,
-            aggregations=[Count(), Metric(id=4)],
+            aggregations=[Count(), Metric(id=4, _using=None)],
         )
         self.assertEqual([["count"], ["metric", 4]], query._aggregations)
 
