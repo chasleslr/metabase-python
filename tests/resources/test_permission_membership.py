@@ -1,4 +1,5 @@
-from metabase import PermissionGroup, PermissionMembership
+from metabase.resources.permission_group import PermissionGroup
+from metabase.resources.permission_membership import PermissionMembership
 from tests.helpers import IntegrationTestCase
 
 

@@ -1,5 +1,7 @@
-from metabase import Database, Field, Table
 from metabase.exceptions import NotFoundError
+from metabase.resources.database import Database
+from metabase.resources.field import Field
+from metabase.resources.table import Table
 from tests.helpers import IntegrationTestCase
 
 
@@ -34,7 +36,7 @@ class DatabaseTests(IntegrationTestCase):
             name="Test",
             engine="h2",
             details={
-                "db": "zip:/app/metabase.jar!/sample-dataset.db;USER=GUEST;PASSWORD=guest"
+                "db": "zip:/app/metabase.jar!/sample-database.db;USER=GUEST;PASSWORD=guest"
             },
             using=self.metabase,
         )
@@ -73,7 +75,7 @@ class DatabaseTests(IntegrationTestCase):
             name="Test",
             engine="h2",
             details={
-                "db": "zip:/app/metabase.jar!/sample-dataset.db;USER=GUEST;PASSWORD=guest"
+                "db": "zip:/app/metabase.jar!/sample-database.db;USER=GUEST;PASSWORD=guest"
             },
             using=self.metabase,
         )
