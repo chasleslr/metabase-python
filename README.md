@@ -13,8 +13,8 @@ pip install metabase-python
 ```
 
 ## Usage
-This API is still experimental and may change significantly between minor versions.
 
+### Connection
 
 Start by creating an instance of Metabase with your credentials.
 ```python
@@ -27,6 +27,7 @@ metabase = Metabase(
 )
 ```
 
+### Interacting with Endpoints
 You can then interact with any of the supported endpoints through the classes included in this package. Methods that
 instantiate an object from the Metabase API require the `using` parameter which expects an instance of `Metabase` such
 as the one we just instantiated above. All changes are reflected in Metabase instantly.
@@ -84,19 +85,21 @@ my_group = PermissionGroup.create(name="My Group", using=metabase)
 for user in User.list():
     # add all users to my_group
     PermissionMembership.create(
-        using=metabase,
         group_id=my_group.id,
-        user_id=user.id
+        user_id=user.id,
+        using=metabase,
     )
 ```
 
-You can also execute queries and get results back as a Pandas DataFrame. Currently, you need to provide
-the exact MBQL (i.e. Metabase Query Language) as the `query` argument.
+### Querying & MBQL
+
+You can also execute queries and get results back as a Pandas DataFrame. You can provide the exact MBQL, or use
+the `Query` object to compile MBQL (i.e. Metabase Query Language) from Python classes included in this package.
+
 ```python
-from metabase import Dataset
+from metabase import Dataset, Query, Count, GroupBy, TemporalOption
 
 dataset = Dataset.create(
-    using.metabase,
     database=1,
     type="query",
     query={
@@ -104,10 +107,82 @@ dataset = Dataset.create(
         "aggregation": [["count"]],
         "breakout": ["field", 7, {"temporal-unit": "year"},],
     },
+    using=metabase,
+)
+
+# compile the MBQL above using the Query object
+dataset = Dataset.create(
+    database=1,
+    type="query",
+    query=Query(
+        table_id=2,
+        aggregations=[Count()],
+        group_by=[GroupBy(id=7, option=TemporalOption.YEAR)]
+    ).compile(),
+    using=metabase
 )
 
 df = dataset.to_pandas()
 ```
+
+As shown above, the `Query` object allows you to easily compile MBQL from Python objects. Here is a
+more complete example:
+```python
+from metabase import Query, Sum, Average, Metric, Greater, GroupBy, BinOption, TemporalOption
+
+query = Query(
+    table_id=5,
+    aggregations=[
+        Sum(id=5),                                  # Provide the ID for the Metabase field
+        Average(id=5, name="Average of Price"),     # Optionally, you can provide a name
+        Metric.get(5)                               # You can also provide your Metabase Metrics
+    ],
+    filters=[
+        Greater(id=1, value=5.5)                    # Filter for values of FieldID 1 greater than 5.5
+    ],
+    group_by=[
+        GroupBy(id=4),                              # Group by FieldID 4
+        GroupBy(id=5, option=BinOption.AUTO),       # You can use Metabase's binning feature for numeric fields
+        GroupBy(id=5, option=TemporalOption.YEAR)   # Or it's temporal option for date fields
+    ]
+)
+
+print(query.compile())
+{
+    'source-table': 5,
+    'aggregation': [
+        ['sum', ['field', 5, None]],
+        ['aggregation-options', ['avg', ['field', 5, None]], {'name': 'Average of Price', 'display-name': 'Average of Price'}],
+        ["metric", 5]
+    ],
+    'breakout': [
+        ['field', 4, None],
+        ['field', 5, {'binning': {'strategy': 'default'}}],
+        ['field', 5, {'temporal-unit': 'year'}]
+    ],
+    'filter': ['>', ['field', 1, None], 5.5]
+}
+```
+
+This can also be used to more easily create `Metric` objects.
+
+```python
+from metabase import Metric, Query, Count, EndsWith, CaseOption
+
+
+metric = Metric.create(
+    name="Gmail Users",
+    description="Number of users with a @gmail.com email address.",
+    table_id=2,
+    definition=Query(
+        table_id=1,
+        aggregations=[Count()],
+        filters=[EndsWith(id=4, value="@gmail.com", option=CaseOption.CASE_INSENSITIVE)]
+    ).compile(),
+    using=metabase
+)
+```
+
 
 
 ## Endpoints

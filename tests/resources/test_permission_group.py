@@ -1,5 +1,5 @@
-from metabase import PermissionGroup
 from metabase.exceptions import NotFoundError
+from metabase.resources.permission_group import PermissionGroup
 from tests.helpers import IntegrationTestCase
 
 

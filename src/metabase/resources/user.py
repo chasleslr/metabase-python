@@ -38,17 +38,39 @@ class User(ListResource, CreateResource, GetResource, UpdateResource, DeleteReso
     updated_at: datetime
 
     @classmethod
-    def list(cls, using: Metabase) -> List[User]:
+    def list(
+        cls,
+        using: Metabase,
+        status: str = None,
+        query: str = None,
+        group_id: int = None,
+        include_deactivated: bool = None,
+        limit: int = None,
+        offset: int = None,
+    ) -> List[User]:
         """
         Fetch a list of Users. By default returns every active user but only active users.
 
-        If status is deactivated, include deactivated users only. If status is all, include all users (active and inactive). Also supports include_deactivated, which if true, is equivalent to status=all. status and included_deactivated requires superuser permissions.
+        If status is deactivated, include deactivated users only. If status is all, include all users (active and
+        inactive). Also supports include_deactivated, which if true, is equivalent to status=all. status and
+        included_deactivated requires superuser permissions.
 
         For users with segmented permissions, return only themselves.
 
-        Takes limit, offset for pagination. Takes query for filtering on first name, last name, email. Also takes group_id, which filters on group id.
+        Takes limit, offset for pagination. Takes query for filtering on first name, last name, email. Also takes
+        group_id, which filters on group id.
         """
-        response = using.get(cls.ENDPOINT)
+        response = using.get(
+            cls.ENDPOINT,
+            params={
+                "status": status,
+                "query": query,
+                "group_id": group_id,
+                "include_deactivated": include_deactivated,
+                "limit": limit,
+                "offset": offset,
+            },
+        )
         records = [
             cls(_using=using, **user) for user in response.json().get("data", [])
         ]

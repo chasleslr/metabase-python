@@ -1,4 +1,5 @@
-from metabase import Field, Metric
+from metabase.resources.field import Field
+from metabase.resources.metric import Metric
 from metabase.resources.segment import Segment
 from metabase.resources.table import Dimension, Table
 from tests.helpers import IntegrationTestCase

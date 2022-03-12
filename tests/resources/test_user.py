@@ -1,7 +1,8 @@
 from random import randint
 
-from metabase import User
+from metabase import PermissionGroup
 from metabase.exceptions import NotFoundError
+from metabase.resources.user import User
 from tests.helpers import IntegrationTestCase
 
 
@@ -12,11 +13,60 @@ class UserTests(IntegrationTestCase):
             if user.id != 1:
                 user.delete()
 
+        groups = PermissionGroup.list(using=self.metabase)
+        for group in groups:
+            if group.id > 2:
+                group.delete()
+
     def test_import(self):
         """Ensure User can be imported from Metabase."""
         from metabase import User
 
         self.assertIsNotNone(User(_using=None))
+
+    def test_list(self):
+        """Ensure User.list() returns a list of Users, and supports filter parameters."""
+        users = User.list(using=self.metabase)
+        self.assertIsInstance(users, list)
+        self.assertEqual(1, len(users))
+
+        user1 = User.create(
+            first_name="Test",
+            last_name="Test",
+            email=f"{randint(2, 10000)}@example.com",
+            password="example123",
+            using=self.metabase,
+        )
+        group = PermissionGroup.create(using=self.metabase, name="foo")
+        user2 = User.create(
+            first_name="Test",
+            last_name="Test",
+            email=f"{randint(2, 10000)}@example.com",
+            password="example123",
+            group_ids=[1, group.id],
+            using=self.metabase,
+        )
+
+        users = User.list(using=self.metabase)
+        self.assertEqual(3, len(users))
+
+        users = User.list(using=self.metabase, query=user1.email)
+        self.assertEqual(1, len(users))
+        self.assertEqual(users[0].id, user1.id)
+
+        users = User.list(using=self.metabase, group_id=group.id)
+        self.assertEqual(1, len(users))
+        self.assertEqual(users[0].id, user2.id)
+
+        user1.delete()
+        users = User.list(using=self.metabase, include_deactivated=True)
+        self.assertTrue(user1.id in map(lambda u: u.id, users))
+
+        users = User.list(using=self.metabase, limit=1)
+        self.assertEqual(1, len(users))
+
+        users = User.list(using=self.metabase, limit=2)
+        self.assertEqual(2, len(users))
 
     def test_get(self):
         """
