@@ -7,10 +7,11 @@ release: clear-builds build distribute
 clear-builds:
 	@rm -rf dist
 
-build:
-	@pipenv run python -m pip install --upgrade build
+build: clear-builds
 	@pipenv run python -m build
 
 distribute:
-	@pipenv run python -m pip install --upgrade twine
 	@pipenv run python -m twine upload dist/*
+
+distribute-test:
+	@pipenv run python -m twine upload --repository testpypi dist/*
