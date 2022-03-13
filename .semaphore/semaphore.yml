@@ -1,0 +1,63 @@
+version: v1.0
+name: metabase-python
+
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu2004
+
+blocks:
+  - name: Code Quality
+    task:
+      prologue:
+        commands:
+          - checkout
+          - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          - source $HOME/.poetry/env
+          - poetry install
+
+      jobs:
+        - name: Lint
+          commands:
+            - poetry run black . --check
+
+  - name: Test
+    task:
+      secrets:
+        - name: codecov-metabase-python
+
+      prologue:
+        commands:
+          - checkout
+          - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          - source $HOME/.poetry/env
+          - poetry install
+          - docker-compose up -d
+          - sleep 30s
+
+      jobs:
+        - name: pytest
+          commands:
+            - poetry run pytest --cov-report xml --cov-report term --junitxml=report.xml
+
+      epilogue:
+        commands:
+          - test-results publish report.xml
+          - bin/install-codecov.sh
+          - ./codecov -t ${CODECOV_TOKEN}
+
+after_pipeline:
+  task:
+    jobs:
+      - name: Publish Results
+        commands:
+          - test-results gen-pipeline-report
+
+promotions:
+  - name: Build & Publish
+    pipeline_file: package.yml
+    auto_promote:
+      when: result = 'passed' and branch = 'main'
+
+  - name: Build & Publish (Test)
+    pipeline_file: package_test.yml

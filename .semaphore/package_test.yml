@@ -1,0 +1,29 @@
+version: v1.0
+
+name: Build & Publish on PyPI (Test)
+
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+
+
+blocks:
+  - name: Build & Publish
+    task:
+      secrets:
+        - name: test-pypi-metabase-python
+
+      prologue:
+        commands:
+          - checkout
+          - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          - source $HOME/.poetry/env
+          - poetry install
+
+      jobs:
+        - name: PyPI (Test)
+          commands:
+            - make package
+            - poetry config repositories.test-pypi https://test.pypi.org/legacy/
+            - poetry publish -r test-pypi -n
