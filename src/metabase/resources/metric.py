@@ -47,7 +47,7 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
         table_id: int,
         definition: dict,
         description: str = "Created by metabase-python.",
-        **kwargs
+        **kwargs,
     ) -> Metric:
         return super(Metric, cls).create(
             using=using,
@@ -55,7 +55,7 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
             table_id=table_id,
             definition=definition,
             description=description,
-            **kwargs
+            **kwargs,
         )
 
     def update(
@@ -69,7 +69,7 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
         caveats: str = MISSING,
         archived: bool = MISSING,
         show_in_getting_started: bool = MISSING,
-        **kwargs
+        **kwargs,
     ) -> None:
         return super(Metric, self).update(
             revision_message=revision_message,
@@ -81,7 +81,7 @@ class Metric(ListResource, CreateResource, GetResource, UpdateResource):
             caveats=caveats,
             archived=archived,
             show_in_getting_started=show_in_getting_started,
-            **kwargs
+            **kwargs,
         )
 
     def archive(self):

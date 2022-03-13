@@ -42,7 +42,7 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
         table_id: int,
         definition: dict,
         description: str = "Created by metabase-python.",
-        **kwargs
+        **kwargs,
     ) -> Segment:
         return super(Segment, cls).create(
             using=using,
@@ -50,7 +50,7 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
             table_id=table_id,
             definition=definition,
             description=description,
-            **kwargs
+            **kwargs,
         )
 
     def update(
@@ -63,7 +63,7 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
         points_of_interest: str = MISSING,
         caveats: str = MISSING,
         archived: bool = MISSING,
-        **kwargs
+        **kwargs,
     ) -> None:
         return super(Segment, self).update(
             revision_message=revision_message,
@@ -74,7 +74,7 @@ class Segment(ListResource, CreateResource, GetResource, UpdateResource):
             caveats=caveats,
             archived=archived,
             show_in_getting_started=show_in_getting_started,
-            **kwargs
+            **kwargs,
         )
 
     def archive(self):
